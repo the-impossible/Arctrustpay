@@ -23,7 +23,7 @@ EMAIL_HOST_USER=config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD=config("EMAIL_HOST_PASSWORD")
 
 # Media
-STATIC_ROOT = '/home/arctoiuu/arctrustpay.com/static'
-MEDIA_ROOT = '/home/arctoiuu/arctrustpay.com/media'
+STATIC_ROOT = '/home/arctoiuu/public_html/static'
+MEDIA_ROOT = '/home/arctoiuu/public_html/media'
 
 HTTP = 'https://'

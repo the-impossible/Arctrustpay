@@ -16,7 +16,6 @@ from trustpay_email.mailer import *
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
-from trustpay_email.mailer import *
 
 # Create your views here.
 class LoginPageView(View):
@@ -99,15 +98,8 @@ class RegisterPageView(View):
             messages.error(request, form.errors.as_text())
             return render(request, self.template_name, context)
 
-class EmailPreviewPageView(View):
-    template_name = "email/support_request.html"
-
-    def get(self, request):
-        user_details = {
-            'email':'nccsteam@gmail.com',
-            'user':'nccsteam@gmail.com',
-        }
-        Email.send(user_details, 'test')
+class EmailPreviewPageView(TemplateView):
+    template_name = "email/crypto_deposit_failed.html"
 
 class SignOutPageView(TemplateView):
     template_name = "backend/auth/signout.html"

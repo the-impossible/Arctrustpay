@@ -15,6 +15,7 @@ django-phonenumber-field = "*"
 babel = "*"
 phonenumbers = "*"
 django-auto-logout = "*"
+pymysql = "*"
 
 [dev-packages]
 
