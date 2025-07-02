@@ -1,0 +1,40 @@
+{% load static %}
+<footer class="footer pt-5 pb-5">
+    <div class="container">
+      <div class="row justify-content-between mb-5 g-xl-5">
+        <div class="col-md-4 mb-5 mb-lg-0">
+          <h3 class="mb-3">About</h3>
+          <p class="mb-4">we are redefining online banking by offering secure, flexible, and innovative financial solutions tailored to individual and business needs.</p>
+        </div>
+        <div class="col-md-7">
+          <div class="row g-2">
+            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
+              <h3 class="mb-3">Company</h3>
+              <ul class="list-unstyled">
+                <li><a href="page-terms-conditions.html">Terms &amp; Conditions</a></li>
+                <li><a href="page-privacy-policy.html">Privacy Policy</a></li>
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0">
+              <h3 class="mb-3">Accounts</h3>
+              <ul class="list-unstyled">
+                <li><a href="{% url "auth:register" %}">Register</a></li>
+                <li><a href="{% url "auth:login" %}">Sign in</a></li>
+              </ul>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4 mb-lg-0 quick-contact">
+              <h3 class="mb-3">Contact</h3>
+              <a class="d-flex mb-3" href="mailto:{{company_email}}"><i class="bi bi-envelope-fill me-3"></i><span>{{company_email}}</span></a><a class="d-flex mb-3" href="tel://{{company_phone}}"><i class="bi bi-telephone-fill me-3"></i><span>{{company_phone}}</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row credits pt-3">
+        <div class="col-xl-8 text-center text-xl-start mb-3 mb-xl-0">
+          &copy;
+          <script>document.write(new Date().getFullYear());</script> {{app_name}}.
+            All rights reserved.
+        </div>
+      </div>
+    </div>
+  </footer>

@@ -1,0 +1,28 @@
+<!-- JAVASCRIPT -->
+{% load static %}
+<script src="/static/backend/assets/libs/swiper/swiper-bundle.min.js"></script>
+<script src="/static/backend/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="/static/backend/assets/libs/simplebar/simplebar.js"></script>
+<script src="/static/backend/assets/js/scroll-top.init.js"></script>
+<script src="/static/backend/assets/js/auth/auth.init.js"></script>
+<script type="module" src="/static/backend/assets/js/ui/modal.init.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'frontend/js/loader.js' %}"></script>
+
+<script>
+    window.setTimeout(function() {
+        $(".alert").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+
+        $("#remove").fadeTo(500, 0).slideUp(500, function(){
+            $(this).remove();
+        });
+    }, 10000);
+</script>
+<script type="text/javascript">
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL}, 'google_translate_element');
+    }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>

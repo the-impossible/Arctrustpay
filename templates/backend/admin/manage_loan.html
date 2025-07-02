@@ -1,0 +1,256 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Manage Loan {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard " title="Manage Loan" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+                <div class="col-12 col-xl-12">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Manage Mortgage Loan Applications</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="text-muted mb-4">Review and manage all submitted mortgage loan applications. Verify user documents, approve or reject applications, track deposit payments, and monitor repayment status. Admins can also update appraisal results, loan statuses, and communicate with applicants if more information is required.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Manage Mortgage Loan Applications</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                           <th>Acct No.</th>
+                                           <th>Name</th>
+                                           <th>Amount Requested</th>
+                                           <th>Mortgage Application</th>
+                                           <th>Payment Confirmation</th>
+                                           <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                                {% if object.mortgage_application %}
+
+                                                    <tr>
+                                                    <td>{{forloop.counter}}</td>
+                                                    <td>{{object.user.username|upper}}</td>
+                                                    <td>{{object.user.personal_info|upper}}</td>
+                                                    <td>{{object.amount_requested}}</td>
+                                                    <td>
+                                                        {% if object.status.transaction_status == 'Completed' %}
+                                                            <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#viewMortgageApplicationModal{{forloop.counter}}">Completed - Click to view</span> 
+                                                        {% elif object.status.transaction_status == 'Failed' %}
+                                                            <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                        {% elif object.status.transaction_status == 'Pending' %}
+                                                            <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#approveMortgageApplicationModal{{forloop.counter}}">Pending - Click to approve</span>
+                                                        {% else %}
+                                                            <span class="badge bg-info-subtle text-info py-1 rounded-3 border border-info">N/A</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if object.mortgage_deposit %}
+
+                                                            {% if object.mortgage_deposit.approved %}
+                                                                <a class="btn badge bg-success-subtle text-success py-1 rounded-3 border border-success" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#viewMortgageDepositModal{{forloop.counter}}"
+                                                                >Completed - Click to view</a>
+
+                                                            {% else%}
+                                                                <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#approveMortgageDepositModal{{forloop.counter}}">Pending - Click to approve</span>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            <span class="badge bg-info-subtle text-info py-1 rounded-3 border border-info">N/A</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{object.timestamp}}</td>
+                                                    </tr>
+
+                                                    <div class="modal fade" id="viewMortgageApplicationModal{{forloop.counter}}" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">View Approved Mortgage Application</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>Below is the details of the mortgage application</p>
+                                                                    <br>
+                                                                    <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                                    <p><b>Account Name</b>: {{object.user.personal_info|upper}}</p>
+                                                                    <p><b>Amount Requested</b>: ${{object.amount_requested}}</p>
+                                                                    <p><b>Annual Income</b>: ${{object.annual_income}}</p>
+                                                                    <p><b>Employment Status</b>: {{object.employment_status}}</p>
+                                                                    <p><b>Credit Score</b>: {{object.credit_score}}</p>
+                                                                    <p><b>Credit Report</b>: <a href="{{object.credit_report.url}}" target="_blank">Click to view credit report</a></p>
+                                                                    <p><b>Status</b>: {{object.status}}</p>
+                                                                    <br>
+                                                                    <br>
+                                                                    <p><b>Employment and Property Appraisal</b></p>
+                                                                    <p><b>Employer Name</b>: {{object.mortgage_application.employer_name|upper}}</p>
+                                                                    <p><b>HR Contact</b>: {{object.mortgage_application.hr_contact}}</p>
+                                                                    <p><b>Proof of Income</b>: <a href="{{object.mortgage_application.proof_of_income.url}}" target="_blank">Click to view proof of income</a></p>
+                                                                    <p><b>Property Value</b>: ${{object.mortgage_application.property_value}}</p>
+                                                                    <p><b>Appraisal Report</b>: <a href="{{object.mortgage_application.appraisal_report.url}}" target="_blank">Click to view appraisal report</a></p>
+                                                                    <p><b>Sales Contract</b>: <a href="{{object.mortgage_application.sales_contract.url}}" target="_blank">Click to view Sales Contract</a></p>
+                                                                    <br>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modal fade" id="approveMortgageApplicationModal{{forloop.counter}}" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Approve Mortgage Application</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>Are you sure you want to approve this mortgage?</p>
+                                                                    <br>
+                                                                    <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                                    <p><b>Account Name</b>: {{object.user.personal_info|upper}}</p>
+                                                                    <p><b>Amount Requested</b>: ${{object.amount_requested}}</p>
+                                                                    <p><b>Annual Income</b>: ${{object.annual_income}}</p>
+                                                                    <p><b>Employment Status</b>: {{object.employment_status}}</p>
+                                                                    <p><b>Credit Score</b>: {{object.credit_score}}</p>
+                                                                    <p><b>Credit Report</b>: <a href="{{object.credit_report.url}}" target="_blank">Click to view credit report</a></p>
+                                                                    <p><b>Status</b>: {{object.status}}</p>
+                                                                    <br>
+                                                                    <p><b>Employment and Property Appraisal</b></p>
+                                                                    <p><b>Employer Name</b>: {{object.mortgage_application.employer_name|upper}}</p>
+                                                                    <p><b>HR Contact</b>: {{object.mortgage_application.hr_contact}}</p>
+                                                                    <p><b>Proof of Income</b>: <a href="{{object.mortgage_application.proof_of_income.url}}" target="_blank">Click to view proof of income</a></p>
+                                                                    <p><b>Property Value</b>: ${{object.mortgage_application.property_value}}</p>
+                                                                    <p><b>Appraisal Report</b>: <a href="{{object.mortgage_application.appraisal_report.url}}" target="_blank">Click to view appraisal report</a></p>
+                                                                    <p><b>Sales Contract</b>: <a href="{{object.mortgage_application.sales_contract.url}}" target="_blank">Click to view Sales Contract</a></p>
+                                                                    <br>
+                                                                    <p><b>NB: This action is irreversible</b></p>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <form action="" method="post">
+                                                                        {% csrf_token %}
+                                                                        <input type="hidden" value="{{object.pk}}" name="mortgage_id">
+                                                                        <button class="btn btn-danger" type="submit" name="disapprove">Disapprove</button>
+                                                                        <button class="btn btn-primary" type="submit" name="approve">Approve</button>
+                                                                    </form>
+                                                                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {% if object.mortgage_deposit %}
+                                                    <div class="modal fade" id="approveMortgageDepositModal{{forloop.counter}}" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Approve Mortgage Deposit</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>Are you sure you want to approve this deposit?</p>
+                                                                    <br>
+                                                                    <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                                    <p><b>Account Name</b>: {{object.user.personal_info|upper}}</p>
+                                                                    <p><b>Deposit Amount</b>: ${{object.mortgage_deposit.deposit_amount}}</p>
+                                                                    <p><b>trx_reference</b>: {{object.mortgage_deposit.trx_reference|upper}}</p>
+                                                                    <p><b>Date</b>: {{object.timestamp}}</p>
+                                                                    <p><b>Approved</b>: {% if object.approved %}Approved{% else %}Pending{% endif %}</p>
+                                                                    <br>
+                                                                    <p><b>Cheque Details</b></p>
+                                                                    <p>Front of Cheque</p>
+                                                                    <img src="{{object.mortgage_deposit.cheque_front_img.url}}" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                                                                    <p>Back of Cheque</p>
+                                                                    <img src="{{object.mortgage_deposit.cheque_back_img.url}}" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <form action="" method="post">
+                                                                        {% csrf_token %}
+                                                                        <input type="hidden" value="{{object.pk}}" name="mortgage_id">
+                                                                        <button class="btn btn-primary" type="submit" name="approve_deposit">Approve</button>
+                                                                    </form>
+                                                                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modal fade" id="viewMortgageDepositModal{{forloop.counter}}" aria-hidden="true">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Approve Mortgage Deposit</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>Mortgage Deposit Details</p>
+                                                                    <br>
+                                                                    <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                                    <p><b>Account Name</b>: {{object.user.personal_info|upper}}</p>
+                                                                    <p><b>Deposit Amount</b>: ${{object.mortgage_deposit.deposit_amount}}</p>
+                                                                    <p><b>trx_reference</b>: {{object.mortgage_deposit.trx_reference|upper}}</p>
+                                                                    <p><b>Date</b>: {{object.timestamp}}</p>
+                                                                    <p><b>Approved</b>: {% if object.mortgage_deposit.approved %}Approved{% else %}Pending{% endif %}</p>
+                                                                    <br>
+                                                                    <p><b>Cheque Details</b></p>
+                                                                    <p>Front of Cheque</p>
+                                                                    <img src="{{object.mortgage_deposit.cheque_front_img.url}}" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                                                                    <p>Back of Cheque</p>
+                                                                    <img src="{{object.mortgage_deposit.cheque_back_img.url}}" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                {% endif %}
+
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+
+        </div><!--End container-fluid-->
+
+    </main><!--End app-wrapper-->
+
+{% endblock content %}

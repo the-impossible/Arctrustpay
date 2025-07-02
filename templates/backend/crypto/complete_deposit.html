@@ -1,0 +1,150 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Complete Crypto Deposit {% endblock %}
+{% block content %}
+    {% url 'trx:crypto_deposit' as crypto_deposit_url %}
+    {% with title_sub="Crypto Deposit" title="Complete Crypto Deposit" url=crypto_deposit_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Complete Crypto Deposit</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="text-muted mb-4">You are to make payment of ${{deposit_amount}} using your selected payment method.
+                                Screenshot and upload the proof of {{ wallet_address}} payment.</p>
+                            <form method ="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control" id="walletAddress" name="address" value="{{ wallet_address.crypto_address }}" readonly disabled aria-label="Address" aria-describedby="walletAddress" >
+                                    <span class="input-group-text" id="copyAddress" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#defaultModal"><i class="ri-file-copy-line"></i>
+                                    </span>
+                                </div>
+                                <input type="hidden" name="wallet" value="{{wallet_address.pk}}">
+                                <input type="hidden" name="deposit_amount" value="{{deposit_amount}}">
+                                {{form|crispy}}
+                                <div class="row">
+                                    <img src="" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain; display: none;">
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-primary" name="complete_payment">Complete Payment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="card card-h-100">
+                        <!-- TradingView Widget BEGIN -->
+                        <div class="tradingview-widget-container">
+                            <div class="tradingview-widget-container__widget"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js" async>
+                            {
+                                "symbols": [
+                                [
+                                    "FRED:SP500|1D"
+                                ],
+                                [
+                                    "FRED:NDQ100|1D"
+                                ],
+                                [
+                                    "BLACKBULL:US30|1D"
+                                ]
+                                ],
+                                "chartOnly": false,
+                                "width": "100%",
+                                "height": "100%",
+                                "locale": "en",
+                                "colorTheme": "light",
+                                "autosize": true,
+                                "showVolume": false,
+                                "showMA": false,
+                                "hideDateRanges": false,
+                                "hideMarketStatus": true,
+                                "hideSymbolLogo": false,
+                                "scalePosition": "right",
+                                "scaleMode": "Normal",
+                                "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+                                "fontSize": "10",
+                                "noTimeScale": false,
+                                "valuesTracking": "1",
+                                "changeMode": "price-and-percent",
+                                "chartType": "area",
+                                "lineWidth": 2,
+                                "lineType": 0,
+                                "dateRanges": [
+                                "1d|1",
+                                "1m|1D",
+                                "3m|60",
+                                "12m|1D",
+                                "60m|1W",
+                                "all|1M"
+                                ]
+                            }
+                            </script>
+                        </div>
+                        <!-- TradingView Widget END -->
+                    </div>
+                </div>
+            </div><!--End row-->
+
+            <!-- start:: Default Modal -->
+            <div class="modal fade" id="defaultModal" tabindex="-1" role="dialog"
+            aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">
+                            Wallet Address Copied
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <p class="fw-bold mb-1">
+                                <span style="display: inline-flex; justify-content: center; align-items: center; background-color: #144B4B; border-radius: 50%; width: 100px; height: 100px;">
+                                    <i class="ri-check-line text-white" style="font-size: 2.5rem;"></i>
+                                </span>
+
+                            </p>
+                            <p class="fw-bold mb-1 text-primary fs-5">{{ wallet_address.crypto_address }}</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div><!--End modal-->
+
+        </div><!--End container-fluid-->
+
+        <script>
+            document.getElementById('paymentProof').addEventListener('change', function(event) {
+                const preview = document.getElementById('proofPreview');
+                const file = event.target.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    preview.src = URL.createObjectURL(file);
+                    preview.style.display = 'block'; // show only after selection
+                } else {
+                    preview.src = '';
+                    preview.style.display = 'none';
+                }
+
+            });
+            document.getElementById('copyAddress').addEventListener('click', function() {
+                const walletAddress = document.getElementById('walletAddress');
+                navigator.clipboard.writeText(walletAddress.value)
+            });
+        </script>
+
+    </main><!--End app-wrapper-->
+
+{% endblock content %}

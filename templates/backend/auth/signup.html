@@ -1,0 +1,99 @@
+{% extends "base_auth.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+  <style>
+    .asteriskField {
+        color: red;
+        padding-left: 4px;
+    }
+    </style>
+{% endblock head %}
+{% block title %} Sign-Up {% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100 pt-20 pb-10">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card mx-xxl-8 shadow-none">
+                <div class="card-body p-8">
+                    <h3 class="fw-medium text-center">Let's get started!</h3>
+                    <p class="mb-8 text-muted text-center">Create Your Account in Minutes</p>
+                    {% include "partials/backend/messages.html" %}
+                    <div class="row">
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <div class="mb-4">
+                                {{ form.email|as_crispy_field }}
+                                {% if form.email.errors %}
+                                <div class="alert alert-danger mt-2" role="alert">
+                                    {{ form.email.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                {{ form.account_type|as_crispy_field }}
+                                {% if form.account_type.errors %}
+                                <div class="alert alert-danger mt-2" role="alert">
+                                    {{ form.account_type.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="Password" class="form-label"> Password <span
+                                    class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    {{ form.password }}
+                                    <button type="button"
+                                        class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted toggle-password"
+                                        id="toggle-password" data-target="password"><i
+                                            class="ri-eye-off-line align-middle"></i>
+                                    </button>
+                                </div>
+                                {% if form.password.errors %}
+                                <div class="alert alert-danger mt-2" role="alert">
+                                    {{ form.password.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="ConfirmPassword" class="form-label">Confirm Password <span
+                                    class="text-danger">*</span></label>
+                                <div class="position-relative">
+                                    {{ form.confirm_password }}
+                                    <button type="button"
+                                        class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted toggle-password"
+                                        id="toggle-password" data-target="ConfirmPassword"><i
+                                            class="ri-eye-off-line align-middle"></i>
+                                    </button>
+                                </div>
+                                {% if form.confirm_password.errors %}
+                                <div class="alert alert-danger mt-2" role="alert">
+                                    {{ form.confirm_password.errors }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <button name="create_account" class="btn btn-primary w-100 mb-4">Sign Up</button>
+                            </div>
+
+                        </form>
+                    </div>
+                    <p class="text-center mt-6 mb-0 text-muted fs-13">Already have an account? <a
+                        href="{% url "auth:login" %}" class="link fw-semibold" style="color:#215C5C !important;">Sign In here</a></p>
+                </div>
+            </div>
+            <p class="position-relative text-center fs-13 mb-0">©
+                <script>document.write(new Date().getFullYear())</script> {{app_name}}
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

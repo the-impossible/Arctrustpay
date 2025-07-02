@@ -1,0 +1,207 @@
+<aside class="pe-app-sidebar" id="sidebar">
+    <div class="pe-app-sidebar-logo px-6 d-flex align-items-center position-relative">
+        <!--begin::Brand Image-->
+        <a href="{% url "landing:home" %}" class="d-flex align-items-end logo-main">
+            <img  class="logo-dark" alt="Dark Logo" src="/static/frontend/images/logo-small.svg">
+            <img height="35" width="34" class="logo-light" alt="Light Logo" src="/static/frontend/images/logo-small.svg">
+            <h5 class="text-body-emphasis fw-bolder mb-0 ms-1" style="color: #144B4B !important;">
+                {{ app_name }}
+            </h5>
+        </a>
+        <button type="button" id="sidebarDefaultArrow" class="btn btn-sm p-0 fs-16 text-body-emphasis ms-auto float-end d-none icon-hover-btn d-none"><i class="ri-arrow-right-line fs-5"></i></button>
+        <!--end::Brand Image-->
+    </div>
+    <nav class="pe-app-sidebar-menu nav nav-pills" data-simplebar id="sidebar-simplebar">
+        <div class="d-flex align-items-start flex-column w-100">
+            <ul class="pe-main-menu list-unstyled">
+                <!-- Main Menu -->
+                <li class="pe-menu-title">Main</li>
+                <li class="pe-slide pe-has-sub">
+                    <a href="{% url "user:dashboard" %}" class="pe-nav-link">
+                        <i class="ri-dashboard-line pe-nav-icon"></i>
+                        <span class="pe-nav-content">Dashboards</span>
+                    </a>
+                </li>
+
+                <!-- Pages -->
+                <li class="pe-menu-title">Banking</li>
+                <li class="pe-slide pe-has-sub">
+                    <a href="#collapseAuth" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseAuth">
+                        <i class="ri-wallet-3-line pe-nav-icon"></i>
+                        <span class="pe-nav-content">Deposit</span>
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+                    <ul class="pe-slide-menu collapse" id="collapseAuth">
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">Deposit</a>
+                        </li>
+                        {% if request.user.is_staff %}
+                        <li class="pe-slide-item">
+                            <a href="{% url "adm:manage_cheque_deposit" %}" class="pe-nav-link">
+                               Manage Cheque
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "adm:manage_crypto_deposit" %}" class="pe-nav-link">
+                               Manage Crypto
+                            </a>
+                        </li>
+
+                        {% else %}
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:cheque_deposit" %}" class="pe-nav-link">
+                               Cheque Deposit
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:crypto_deposit" %}" class="pe-nav-link">
+                               Crypto Deposit
+                            </a>
+                        </li>
+
+                        {% endif %}
+                    </ul>
+                </li>
+                {% if request.user.is_staff %}
+
+                <!-- Pages -->
+                <li class="pe-menu-title">Users</li>
+                <li class="pe-slide pe-has-sub">
+                    <a href="#collapseUsers" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseUsers">
+                        <i class="ri-user-3-line pe-nav-icon"></i>
+                        <span class="pe-nav-content">Users</span>
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+                    <ul class="pe-slide-menu collapse" id="collapseUsers">
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">Users</a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "adm:manage_users" %}" class="pe-nav-link">
+                               Manage Users
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if not request.user.is_staff %}
+                <li class="pe-slide pe-has-sub">
+                    <a href="#collapsePages" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapsePages">
+                        <i class="ri-exchange-line pe-nav-icon"></i>
+                        <span class="pe-nav-content">Transfer</span>
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+                    <ul class="pe-slide-menu collapse" id="collapsePages">
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">Transfer</a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:internal_transfer" %}" class="pe-nav-link">
+                                Internal Transfer
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:ach_transfer" %}" class="pe-nav-link">
+                                ACH Transfer
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:d_wire_transfer" %}" class="pe-nav-link">
+                                Domestic Wire
+                            </a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:f_wire_transfer" %}" class="pe-nav-link">
+                                International Wire
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                <!-- Components -->
+                <li class="pe-menu-title">Transactions</li>
+                <li class="pe-slide pe-has-sub">
+                    <a href="#collapseBaseUI" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseBaseUI">
+                        <i class="ri-pencil-ruler-2-line pe-nav-icon"></i>
+                        <span class="pe-nav-content">Transactions</span>
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+                    <ul class="pe-slide-menu collapse" id="collapseBaseUI">
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">Transactions</a>
+                        </li>
+                        {% if request.user.is_staff %}
+                        <li class="pe-slide-item">
+                            <a href="{% url "adm:manage_credit_debit" %}" class="pe-nav-link">Manage Credit / Debit</a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "adm:manage_loan" %}" class="pe-nav-link">Loan Transactions</a>
+                        </li>
+                        {% else %}
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:credit_debit_transaction" %}" class="pe-nav-link">Credit / Debit</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% if not request.user.is_staff %}
+                <li class="pe-slide pe-has-sub">
+                    <a href="#collapseAdvancedUI" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseAdvancedUI">
+                        <i class="ri-hand-coin-line pe-nav-icon"></i>
+                        <span class="pe-nav-content">Loans</span>
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+                    <ul class="pe-slide-menu collapse" id="collapseAdvancedUI">
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">Loans</a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:take_loan" %}" class="pe-nav-link">Take Loans</a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "trx:repay_loan" %}" class="pe-nav-link">Repay Loans</a>
+                        </li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                <!-- Icons & Maps -->
+                <li class="pe-menu-title">Settings</li>
+                <li class="pe-slide pe-has-sub">
+                    <a href="#collapseIcons" class="pe-nav-link" data-bs-toggle="collapse" aria-expanded="false" aria-controls="collapseIcons">
+                        <i class="ri-compasses-2-line pe-nav-icon"></i>
+                        <span class="pe-nav-content">Settings</span>
+                        <i class="ri-arrow-down-s-line pe-nav-arrow"></i>
+                    </a>
+                    <ul class="pe-slide-menu collapse" id="collapseIcons">
+                        <li class="slide pe-nav-content1">
+                            <a href="javascript:void(0)">Settings</a>
+                        </li>
+                        <li class="pe-slide-item">
+                            <a href="{% url "user:account_details" %}" class="pe-nav-link">
+                                Account Details
+                            </a>
+                        </li>
+                        {% if not request.user.is_staff %}
+
+                        <li class="pe-slide-item">
+                            <a href="{% url "user:account_manager" %}" class="pe-nav-link">
+                                Account Manager
+                            </a>
+                        </li>
+                        {% endif %}
+                        <li class="pe-slide-item">
+                            <a style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#logoutModal" class="pe-nav-link">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- Widgets -->
+
+        </div>
+    </nav>
+</aside>

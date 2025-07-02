@@ -1,0 +1,147 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Manage Crypto Deposit {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard " title="Manage Crypto Deposit" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+                <div class="col-12 col-xl-12">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Manage Crypto Deposit</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="text-muted mb-4">This page features allows administrators to view, verify, and approve cheque deposit requests submitted by users. Each entry typically includes user details, cheque amount, date of submission, and an uploaded image of the cheque. Admins can change the status of each deposit (e.g., Pending, Approved, Failed), which automatically updates the user's transaction and balance records if approved.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Account Number</th>
+                                            <th>Name</th>
+                                            <th>Amount</th>
+                                            <th>Network</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.transaction.trx_reference|upper}}</td>
+                                                <td>{{object.user.username|upper}}</td>
+                                                <td>{{object.user.personal_info|upper}}</td>
+                                                <td>${{object.amount}}</td>
+                                                <td>${{object.crypto_type}}</td>
+                                                <td>
+                                                    {% if object.trx_status.transaction_status == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                    {% elif object.trx_status.transaction_status == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                    {% elif object.trx_status.transaction_status == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                    {% else %}
+                                                        <span class="badge bg-info-subtle text-info py-1 rounded-3 border border-info">N/A</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.timestamp}}</td>
+                                                <td>
+                                                    <div class="d-flex gap-3 pt-4">
+                                                        <a class="btn btn-outline-primary {% if object.trx_status.transaction_status == 'Pending' %} w-50 {%else%} w-100"{% endif %} style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#viewModal{{forloop.counter}}">View</a>
+                                                        {% if object.trx_status.transaction_status == 'Pending' %}
+                                                        <a class="btn btn-primary w-50" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#approveModal{{forloop.counter}}">Approve</a>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <div class="modal fade" id="viewModal{{forloop.counter}}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Uploaded Transaction Image</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><strong>Transaction Image</strong></p>
+                                                            <img src="{{object.transaction_image.url}}" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal fade" id="approveModal{{forloop.counter}}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Approve Crypto</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure you want to approve this crypto transaction?</p>
+                                                            <br>
+                                                            <p><b>Reference</b>: {{object.transaction.trx_reference|upper}}</p>
+                                                            <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                            <p><b>Name</b>: {{object.user.personal_info|upper}}</p>
+                                                            <p><b>Amount</b>: ${{object.amount}}</p>
+                                                            <br>
+                                                            <p><b>NB: This action is irreversible</b></p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form action="" method="post">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" value="{{object.pk}}" name="crypto_id">
+                                                                <button class="btn btn-danger" type="submit" name="disapprove">Disapprove</button>
+                                                                <button class="btn btn-primary" type="submit" name="approve">Approve</button>
+                                                            </form>
+                                                            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+
+        </div><!--End container-fluid-->
+
+    </main><!--End app-wrapper-->
+
+{% endblock content %}

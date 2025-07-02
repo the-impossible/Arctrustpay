@@ -1,0 +1,159 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Internal Transfer {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard" title="Internal Transfer" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-12 col-xl-5">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Internal Transfer</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-4">Move funds instantly between accounts within {{app_name}}. Ideal for managing savings, paying off credit, or reallocating funds for budgeting.</p>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="recipient_account" class="form-label">Recipient account<span class="text-danger">*</span></label>
+                                    <input
+                                        name="recipient_account"
+                                        hx-get="{% url 'trx:validate_recipient_account' %}"
+                                        hx-trigger="keyup"
+                                        hx-target="#recipient-name-field"
+                                        hx-swap="outerHTML"
+                                        class="form-control"
+                                        type="number"
+                                        required
+                                    />
+                                </div>
+                                <!-- This is what will get replaced dynamically -->
+                                <div id="recipient-name-field" class="mb-4">
+                                    <label for="recipient_name" class="form-label">Recipient Name<span class="text-danger">*</span></label>
+                                    <input type="text"
+                                        name="recipient_name"
+                                        id="recipient_name_input"
+                                        class="form-control"
+                                        disabled
+                                        value="" />
+                                </div>
+                                {{form|crispy}}
+                                <button type="submit" class="btn btn-primary" id="intiate_transfer" name="intiate_transfer" disabled>Comfirm Payment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-7">
+                    <div class="card overflow-hidden p-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Transfer Instructions</h5>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>
+                                    <p><span class="fw-bold">Enter Destination Account:</span> Enter the account you want to transfer money to.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Enter Amount:</span> Specify the amount you wish to transfer.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Optional Note:</span> Add a brief note or description (e.g., “Rent savings”).
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Review & Confirm:</span> Double-check the details and confirm the transfer.
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Completion:</span> Funds will be moved instantly with no additional charges and you'll be notified via email.
+                                    </p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Type</th>
+                                            <th>Method</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.trx_reference|upper}}</td>
+                                                <td>{% if object.transaction_type.transaction_type|lower == 'debit' %}-{% endif %}
+                                                    ${{object.amount}}
+                                                </td>
+                                                <td>
+                                                    {% if object.transaction_type.transaction_type|lower == 'debit' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">{{object.transaction_type.transaction_type}}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">{{object.transaction_type.transaction_type}}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.transaction_method.method}}</td>
+                                                <td>{{object.description|default:"--"|truncatechars:20}}</td>
+                                                <td>{{object.timestamp}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+        <script>
+            document.body.addEventListener("htmx:afterSwap", function (e) {
+                if (e.target.id === "recipient-name-field") {
+                    const recipientNameInput = document.getElementById("recipient_name_input");
+                    const submitButton = document.getElementById("intiate_transfer");
+
+                    const value = recipientNameInput?.value?.trim().toLowerCase();
+
+                    if (value && value !== "invalid account") {
+                        submitButton.disabled = false;
+                    } else {
+                        submitButton.disabled = true;
+                    }
+                }
+            });
+        </script>
+    </main><!--End app-wrapper-->
+{% endblock content %}

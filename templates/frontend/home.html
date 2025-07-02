@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Home {% endblock title %}
+{% block head %} {% include 'partials/frontend/head.html' %} {% endblock head %}
+{% block body %}
+
+  {% include "partials/frontend/preloader.html" %}
+
+  <!-- ======= Site Wrap =======-->
+  <div class="site-wrap">
+
+    <!-- ======= Header =======-->
+    {% include "partials/frontend/nav.html" %}
+    <!-- End Header-->
+
+    <!-- ======= Main =======-->
+    <main>
+
+      <!-- ======= Hero =======-->
+      <section class="hero__v6 section" id="home">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <div class="row">
+                <div class="col-lg-11"><span class="hero-subtitle text-uppercase" data-aos="fade-up" data-aos-delay="0">Welcome to {{app_name}}</span>
+                  <h1 class="hero-title mb-3" data-aos="fade-up" data-aos-delay="100">Secure, Efficient, and User-Friendly Financial Services</h1>
+                  <p class="hero-description mb-4 mb-lg-5" data-aos="fade-up" data-aos-delay="200">Experience the future of finance with our secure, efficient, and user-friendly financial services.</p>
+                  <div class="cta d-flex gap-2 mb-4 mb-lg-5" data-aos="fade-up" data-aos-delay="300"><a class="btn" href="{% url "auth:register" %}">Open an account</a></div>
+                  <div class="logos mb-4" data-aos="fade-up" data-aos-delay="400"><span class="logos-title text-uppercase mb-4 d-block">Trusted by major companies worldwide</span>
+                    <div class="logos-images d-flex gap-4 align-items-center">
+                      <img class="img-fluid js-img-to-inline-svg" src="{% static 'frontend/images/logo/logo-air-bnb__black.svg' %}" alt="Company 1" style="width: 110px;">
+                      <img class="img-fluid js-img-to-inline-svg" src="{% static 'frontend/images/logo/logo-ibm__black.svg' %}" alt="Company 2" style="width: 80px;">
+                      <img class="img-fluid js-img-to-inline-svg" src="{% static 'frontend/images/logo/logo-google__black.svg' %}" alt="Company 3" style="width: 110px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="hero-img"><img class="img-card img-fluid" src="{% static 'frontend/images/card-expenses.png' %}" alt="Image card" data-aos="fade-down" data-aos-delay="600"><img class="img-main img-fluid rounded-4" src="{% static 'frontend/images/hero-img-1-min.jpg' %}" alt="Hero Image" data-aos="fade-in" data-aos-delay="500"></div>
+            </div>
+          </div>
+        </div>
+        <!-- End Hero-->
+      </section>
+      <!-- End Hero-->
+
+      <!-- ======= Features =======-->
+      <section class="section features__v2" id="features">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <div class="d-lg-flex p-5 rounded-4 content" data-aos="fade-in" data-aos-delay="0">
+                <div class="row">
+                  <div class="col-lg-5 mb-5 mb-lg-0" data-aos="fade-up" data-aos-delay="0">
+                    <div class="row">
+                      <div class="col-lg-11">
+                        <div class="h-100 flex-column justify-content-between d-flex">
+                          <div>
+                            <h2 class="mb-4">Why Choose us</h2>
+                            <p class="mb-5">At {{app_name}}, we believe banking should be simple, secure, and accessible to everyone. We're more than just a digital bank—we're your financial partner for life. Here's why thousands of individuals and businesses trust us every day."</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-7">
+                    <div class="row justify-content-end">
+                      <div class="col-lg-11">
+                        <div class="row">
+                          <div class="col-sm-6" data-aos="fade-up" data-aos-delay="0">
+                            <div class="icon text-center mb-4"><i class="bi bi-person-check fs-4"></i></div>
+                            <h3 class="fs-6 fw-bold mb-3">User-Friendly Interface</h3>
+                            <p>Easy navigation with responsive design for various devices.</p>
+                          </div>
+                          <div class="col-sm-6" data-aos="fade-up" data-aos-delay="100">
+                            <div class="icon text-center mb-4"><i class="bi bi-graph-up fs-4"></i></div>
+                            <h3 class="fs-6 fw-bold mb-3">All-in-One Banking Experience</h3>
+                            <p>Easily manage accounts, request loans, deposit cheques or crypto.</p>
+                          </div>
+                          <div class="col-sm-6" data-aos="fade-up" data-aos-delay="200">
+                            <div class="icon text-center mb-4"><i class="bi bi-headset fs-4"></i></div>
+                            <h3 class="fs-6 fw-bold mb-3">Customer Support</h3>
+                            <p>24/7 service via chat, email, phone, and a detailed help center.</p>
+                          </div>
+                          <div class="col-sm-6" data-aos="fade-up" data-aos-delay="200">
+                            <div class="icon text-center mb-4"><i class="bi bi-cash-stack fs-4"></i></div>
+                            <h3 class="fs-6 fw-bold mb-3">Fast & Flexible Loan Processing</h3>
+                            <p>offers pre-approval in minutes and disbursement within 24-48 hours.</p>
+                          </div>
+                          <div class="col-sm-6" data-aos="fade-up" data-aos-delay="300">
+                            <div class="icon text-center mb-4"><i class="bi bi-shield-lock fs-4"></i></div>
+                            <h3 class="fs-6 fw-bold mb-3">Security Features</h3>
+                            <p>We deploy AI-powered fraud detection and two-factor authentication to ensure your account is always secure.</p>
+                          </div>
+                          <div class="col-sm-6" data-aos="fade-up" data-aos-delay="300">
+                            <div class="icon text-center mb-4"><i class="bi bi-currency-bitcoin fs-4"></i></div>
+                            <h3 class="fs-6 fw-bold mb-3">Crypto-Compatible Deposits</h3>
+                            <p>{{app_name}} allows you to deposit and manage both crypto and traditional currencies securely.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Features-->
+
+      <!-- ======= How it works =======-->
+      {% include "partials/frontend/how_it_works.html" %}
+      <!-- End How it works-->
+
+      <!-- ======= Stats =======-->
+      <section class="stats__v3 section">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <div class="d-flex flex-wrap content rounded-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="rounded-borders">
+                  <div class="rounded-border-1"></div>
+                  <div class="rounded-border-2"></div>
+                  <div class="rounded-border-3"></div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-up" data-aos-delay="100">
+                  <div class="stat-item">
+                    <h3 class="fs-1 fw-bold"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="100" data-purecounter-duration="2">0</span><span>K+</span></h3>
+                    <p class="mb-0">Active Users</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-up" data-aos-delay="200">
+                  <div class="stat-item">
+                    <h3 class="fs-1 fw-bold"> <span class="purecounter" data-purecounter-start="0" data-purecounter-end="7500" data-purecounter-duration="2">0</span><span>+</span></h3>
+                    <p class="mb-0">Crypto Transactions</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-up" data-aos-delay="300">
+                  <div class="stat-item">
+                    <h3 class="fs-1 fw-bold"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="20" data-purecounter-duration="2">0</span><span>k</span></h3>
+                    <p class="mb-0">Loans Disbursed</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Stats-->
+
+      <!-- ======= Services =======-->
+      {% include "partials/frontend/service.html" %}
+      <!-- Services-->
+
+      <!-- ======= Testimonials =======-->
+      <section class="section testimonials__v2" id="testimonials">
+        <div class="container">
+          <div class="row mb-5">
+            <div class="col-lg-5 mx-auto text-center"><span class="subtitle text-uppercase mb-3" data-aos="fade-up" data-aos-delay="0">Testimonials</span>
+              <h2 class="mb-3" data-aos="fade-up" data-aos-delay="100">What Our Users Are Saying</h2>
+              <p data-aos="fade-up" data-aos-delay="200">Real Stories of Success and Satisfaction from Our Diverse Community</p>
+            </div>
+          </div>
+          <div class="row g-4" data-masonry="{&quot;percentPosition&quot;: true }">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="0">
+              <div class="testimonial rounded-4 p-4">
+                <blockquote class="mb-3">
+                    &ldquo;
+                    I applied for a loan through {{app_name}}, and to my surprise, the entire process was stress-free and fast. The support team guided me every step of the way, and I got approval in just three days. I now own my first home, all thanks to their efficiency and professionalism
+                  &rdquo;
+                </blockquote>
+                <div class="testimonial-author d-flex gap-3 align-items-center">
+                  <div class="author-img"><img class="rounded-circle img-fluid" src="{% static 'frontend/images/person-sq-2-min.jpg' %}" alt="Arc-trustPay image placeholder"></div>
+                  <div class="lh-base"><strong class="d-block">John Davis</strong><span>Small Business Owner</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+              <div class="testimonial rounded-4 p-4">
+                <blockquote class="mb-3">
+                    &ldquo;
+                    As someone who trades crypto regularly, I love that I can deposit directly into my {{app_name}} wallet. It bridges the gap between digital assets and traditional banking. The fact that I can also cash out or make transfers instantly is a game-changer.
+                  &rdquo;
+                </blockquote>
+                <div class="testimonial-author d-flex gap-3 align-items-center">
+                  <div class="author-img"><img class="rounded-circle img-fluid" src="{% static 'frontend/images/person-sq-1-min.jpg' %}" alt="Arc-trustPay image placeholder"></div>
+                  <div class="lh-base"><strong class="d-block">Emily Smith</strong><span>Crypto Trader & Consultant</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+              <div class="testimonial rounded-4 p-4">
+                <blockquote class="mb-3">
+                    &ldquo;
+                  Portfolio management tools on this platform are top-notch. The variety of choices caters to all types of investors, from conservative to aggressive. I especially appreciate how the tailored recommendations align perfectly with my financial goals. .
+                  &rdquo;
+                </blockquote>
+                <div class="testimonial-author d-flex gap-3 align-items-center">
+                  <div class="author-img"><img class="rounded-circle img-fluid" src="{% static 'frontend/images/person-sq-5-min.jpg' %}" alt="Arc-trustPay image placeholder"></div>
+                  <div class="lh-base"><strong class="d-block">Michael Rodriguez</strong><span>Investor</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+              <div class="testimonial rounded-4 p-4">
+                <blockquote class="mb-3">
+                    &ldquo;
+                    I reached out to support at midnight thinking no one would respond until morning. To my surprise, someone responded within five minutes and resolved my issue on the spot. Their 24/7 support is not just a claim—it's real.
+                  &rdquo;
+                </blockquote>
+                <div class="testimonial-author d-flex gap-3 align-items-center">
+                  <div class="author-img"><img class="rounded-circle img-fluid" src="{% static 'frontend/images/person-sq-3-min.jpg' %}" alt="Arc-trustPay image placeholder"></div>
+                  <div class="lh-base"><strong class="d-block">Sarah Lee</strong><span>College Student</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="400">
+              <div class="testimonial rounded-4 p-4">
+                <blockquote class="mb-3">
+                    &ldquo;
+                  The security features are outstanding. Knowing that my financial data is protected gives me peace of mind, and the platform's efficiency makes it a pleasure to use.
+                  &rdquo;
+                </blockquote>
+                <div class="testimonial-author d-flex gap-3 align-items-center">
+                  <div class="author-img"><img class="rounded-circle img-fluid" src="{% static 'frontend/images/person-sq-7-min.jpg' %}" alt="Arc-trustPay image placeholder"></div>
+                  <div class="lh-base"><strong class="d-block">James Kim</strong><span>IT Consultant</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="500">
+              <div class="testimonial rounded-4 p-4">
+                <blockquote class="mb-3">
+                    &ldquo;
+                    What stands out about {{app_name}} is their transparency. I've had bad experiences with hidden charges from other platforms, but here, everything is clear. .
+                  &rdquo;
+                </blockquote>
+                <div class="testimonial-author d-flex gap-3 align-items-center">
+                  <div class="author-img"><img class="rounded-circle img-fluid" src="{% static 'frontend/images/person-sq-8-min.jpg' %}" alt="Arc-trustPay image placeholder"></div>
+                  <div class="lh-base"><strong class="d-block">Laura Brown</strong><span>Entrepreneur</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Testimonials-->
+
+      <!-- ======= FAQ =======-->
+      {% include "partials/frontend/faq.html" %}
+      <!-- End FAQ-->
+
+      <!-- ======= Footer =======-->
+      {% include "partials/frontend/footer.html" %}
+      <!-- End Footer-->
+
+    </main>
+
+  </div>
+
+  <!-- ======= Back to Top =======-->
+  {% include "partials/frontend/scroll-top.html" %}
+  <!-- End Back to top-->
+  <!-- Start Script -->
+  {% include "partials/frontend/script.html" %}
+  <!-- End Script -->
+
+{% endblock body %}

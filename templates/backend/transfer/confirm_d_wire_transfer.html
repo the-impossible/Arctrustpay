@@ -1,0 +1,120 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Confirm Domestic Wire Transfer {% endblock %}
+{% block content %}
+    {% url 'trx:d_wire_transfer' as d_wire_transfer_url %}
+    {% with title_sub="Domestic Transfer" title="Confirm Domestic Transfer" url=d_wire_transfer_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                {% if request.user.is_support %}
+
+                <div class="col-12 col-xl-5 mx-auto mt-5">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Confirm Domestic Transfer</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="text-muted mb-4">
+                                Please review the transfer details below before confirming.
+                            </p>
+
+                            <ul class="list-group mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Amount:</strong>
+                                    <span class="text-success fw-bold">${{d_wire_data.amount}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Bank Name:</strong>
+                                    <span>{{d_wire_data.bank_name}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Account Name:</strong>
+                                    <span>{{d_wire_data.account_name}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Account Number:</strong>
+                                    <span>{{d_wire_data.account_number}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Routing Number:</strong>
+                                    <span>{{d_wire_data.routing_number}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Bank Name:</strong>
+                                    <span>{{d_wire_data.bank_name}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Fee:</strong>
+                                    <span class="text-success">${{d_wire_data.fee}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Total Amount:</strong>
+                                    <span class="text-success">${{d_wire_data.total}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Description:</strong>
+                                    <span>{{ d_wire_data.note|default:"N/A"|truncatechars:30 }}</span>
+                                </li>
+                            </ul>
+
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="transactionID" class="form-label">Transaction pin<span class="text-danger">*</span></label>
+                                    <div class="position-relative">
+                                        <input type="password"
+                                            name="transaction_pin"
+                                            id="transactionPinID"
+                                            class="form-control"
+                                            inputmode="numeric"
+                                            placeholder="e.g 1234"
+                                            pattern="\d{4}"
+                                            maxlength="4"
+                                            required
+                                            value="" />
+
+                                        <button type="button"
+                                            class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted toggle-password"
+                                            id="toggle-password" data-target="transactionPinID"><i
+                                                class="ri-eye-off-line align-middle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="transactionID" class="form-label">IMF code<span class="text-danger">*</span></label>
+                                    <div class="position-relative">
+                                        <input type="text"
+                                            name="imfCode"
+                                            id="imfCode"
+                                            class="form-control"
+                                            required
+                                            value="" />
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="confirm_transfer" name="confirm_transfer">Comfirm Payment</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+                {% else %}
+                {% include "partials/backend/support.html" %}
+                {% endif %}
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+
+    </main><!--End app-wrapper-->
+{% endblock content %}

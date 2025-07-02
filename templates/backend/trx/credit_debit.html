@@ -1,0 +1,138 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} All Transactions {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard" title="Credit/Debit Transactions" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Transaction Type</th>
+                                            <th>Transaction Method</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.trx_reference|upper}}</td>
+                                                <td>{% if object.transaction_type.transaction_type|lower == 'debit' %}-{% endif %}
+                                                    ${{object.amount}}</td>
+                                                <td>
+                                                    {% if object.get_origin_status == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                    {% elif object.get_origin_status == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                    {% elif object.get_origin_status == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                    {% else %}
+                                                        {% if object.trx_status|title == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                        {% elif object.trx_status|title == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                        {% elif object.trx_status|title == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                        {% else %}
+                                                            <span class="badge bg-info-subtle text-info py-1 rounded-3 border border-info">N/A</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.transaction_type}}</td>
+                                                <td>{{object.transaction_method}}</td>
+                                                <td>{{object.timestamp}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+        <script src="/static/backend/assets/js/country-states.js"></script>
+
+    <script>
+    // user country code for selected option
+    var user_country_code = "US";
+
+        (() => {
+            // script https://www.html-code-generator.com/html/drop-down/state-name
+
+            // Get the country name and state name from the imported script.
+            const country_list = country_and_states.country;
+            const state_list = country_and_states.states;
+
+            const id_state_option = document.getElementById("state");
+            const id_country_option = document.getElementById("country");
+
+            const create_country_selection = () => {
+                let option = '';
+                option += '<option value="">select country</option>';
+                for (const country_code in country_list) {
+                    // set selected option user country
+                    let selected = (country_code == user_country_code) ? ' selected' : '';
+                    option += '<option value="' + country_code + '"' + selected + '> '
+                    + country_list[country_code] + '</option>';
+                }
+                id_country_option.innerHTML = option;
+            };
+
+            const create_states_selection = () => {
+                // selected country code
+                let selected_country_code = id_country_option.value;
+                // get state names by selected country-code
+                let state_names = state_list[selected_country_code];
+
+                // if invalid country code
+                if (!state_names) {
+                    id_state_option.innerHTML = '<option>select state</option>';
+                    return;
+                }
+                // create option
+                let option = '';
+                option += '<option>select state</option>';
+                state_names.forEach(state => {
+                    option += '<option value="' + state.code + '">' + state.name + '</option>';
+                });
+                id_state_option.innerHTML = option;
+            };
+
+            // country select change event update state code
+            id_country_option.addEventListener('change', create_states_selection);
+
+            create_country_selection();
+            create_states_selection();
+        })();
+
+    </script>
+    </main><!--End app-wrapper-->
+{% endblock content %}

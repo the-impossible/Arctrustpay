@@ -1,0 +1,281 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+    {% with title_sub="Dashboard" title="Dashboard"%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+    <!-- Begin page -->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- TradingView Widget BEGIN -->
+                            <div class="tradingview-widget-container">
+                                <div class="tradingview-widget-container__widget"></div>
+                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                                {
+                                "symbols": [
+                                    {
+                                    "description": "Tesla",
+                                    "proName": "NASDAQ:TSLA"
+                                    },
+                                    {
+                                    "description": "Apple Inc",
+                                    "proName": "NASDAQ:AAPL"
+                                    },
+                                    {
+                                    "description": "Nvidia",
+                                    "proName": "NASDAQ:NVDA"
+                                    },
+                                    {
+                                    "description": "Microsoft",
+                                    "proName": "NASDAQ:MSFT"
+                                    },
+                                    {
+                                    "description": "Advanced Micro Devices",
+                                    "proName": "NASDAQ:AMD"
+                                    },
+                                    {
+                                    "description": "Meta",
+                                    "proName": "NASDAQ:META"
+                                    },
+                                    {
+                                    "description": "Netflix",
+                                    "proName": "NASDAQ:NFLX"
+                                    }
+                                ],
+                                "showSymbolLogo": true,
+                                "colorTheme": "light",
+                                "isTransparent": false,
+                                "displayMode": "compact",
+                                "locale": "en"
+                                }
+                                </script>
+                            </div>
+                            <!-- TradingView Widget END -->
+                        </div>
+                    </div>
+                </div>
+                {% if request.user.is_staff %}
+                <div class="row">
+                    <div class="col-xxl-12">
+                        <div class="row h-100">
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card card-h-100">
+                                    <div class="card-body d-flex align-items-center justify-content-around">
+                                        <div class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                            <i class="bi bi-receipt"></i>
+                                        </div>
+                                        <div>
+                                            <h3>${{total_cheque}} </h3>
+                                            <span class="fs-5">Cheque</span>
+                                            <p class="fs-12 mb-0">Approved cheque deposits</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card card-h-100">
+                                    <div class="card-body d-flex align-items-center justify-content-around">
+                                        <div class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                            <i class="bi bi-currency-bitcoin"></i>
+                                        </div>
+                                        <div>
+                                            <h3>${{total_crypto}} </h3>
+                                            <span class="fs-5">Crypto</span>
+                                            <p class="fs-12 mb-0">Amount Approved</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card card-h-100">
+                                    <div class="card-body d-flex align-items-center justify-content-around">
+                                        <div class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                            <i class="bi bi-exclamation-octagon"></i>
+                                        </div>
+                                        <div>
+                                            <h3>{{failed_trxs}}</h3>
+                                            <span class="fs-5">Failed Txns</span>
+                                            <p class="fs-12 mb-0">Unsuccessful trxns</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-6">
+                                <div class="card card-h-100">
+                                    <div class="card-body d-flex align-items-center justify-content-around">
+                                        <div class="h-48px w-50px position-relative d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                            <i class="bi bi-person-plus"></i>
+                                        </div>
+                                        <div>
+                                            <h3>{{signed_up_today}}</h3>
+                                            <span class="fs-5">New Users</span>
+                                            <p class="fs-12 mb-0">Sign-ups today</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% else %}
+                <div class="col-xxl-6">
+                    <div class="row h-100">
+                        <div class="col-xl-6 col-sm-6">
+                            <div class="card card-h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <div class="h-48px w-50px d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                            <i class="bi bi-wallet2"></i>
+                                        </div>
+                                        <div>
+                                            <p class="mb-1 text-muted">account number</p>
+                                            <h4 class="fw-bold mb-0">{{ user.username }}</h4>
+                                            <small class="text-muted">Savings</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-5 text-center">
+                                        <p class="text-muted mb-1">available balance</p>
+                                        <h3 class="fw-bold">${{user_balance}}</h3>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <a href="{% url "trx:cheque_deposit" %}" class="btn btn-outline-primary w-50">Deposit</a>
+                                        <a href="{% url "trx:internal_transfer" %}" class="btn btn-primary w-50">Transfer</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6 col-sm-6">
+                            <div class="card card-h-100">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center gap-3 mb-3">
+                                        <div class="h-48px w-50px d-flex justify-content-center align-items-center text-primary fs-4 rounded-3 shadow-lg border">
+                                            <i class="bi bi-cash-stack"></i>
+                                        </div>
+                                        <div>
+                                            <p class="mb-1 text-muted">loan amount</p>
+                                            <h4 class="fw-bold mb-0">$0.00</h4>
+                                            <small class="text-muted">Interest: None • Due: None</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-5 text-center">
+                                        <p class="text-muted mb-1">loan status</p>
+                                        <h5 class="fw-bold">In Active</h5>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between gap-2 pt-2">
+                                        <a href="{% url "trx:take_loan" %}" class="btn btn-outline-primary w-50">Take Loan</a>
+                                        <a href="{% url "trx:repay_loan" %}" class="btn btn-primary w-50">Repay</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xxl-6">
+                    <div class="card overflow-hidden card-h-100 p-4">
+                        <!-- TradingView Widget BEGIN -->
+                        <div class="tradingview-widget-container" style="height:100%;width:100%">
+                            <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                                {
+                                    "autosize": true,
+                                    "symbol": "NASDAQ:AAPL",
+                                    "interval": "D",
+                                    "timezone": "exchange",
+                                    "theme": "light",
+                                    "backgroundColor": "rgba(255, 255, 255, 1)",
+                                    "style": "3",
+                                    "hide_top_toolbar": true,
+                                    "save_image": false,
+                                    "locale": "en",
+                                    "calendar": false,
+                                    "support_host": "https://www.tradingview.com"
+                                }
+                            </script>
+                        </div>
+                        <!-- TradingView Widget END -->
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Transaction Type</th>
+                                            <th>Transaction Method</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.trx_reference|upper}}</td>
+                                                <td>{% if object.transaction_type.transaction_type|lower == 'debit' %}-{% endif %}
+                                                    ${{object.amount}}</td>
+                                                <td>
+                                                    {% if object.get_origin_status == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                    {% elif object.get_origin_status == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                    {% elif object.get_origin_status == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                    {% else %}
+                                                        {% if object.trx_status|title == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                        {% elif object.trx_status|title == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                        {% elif object.trx_status|title == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                        {% else %}
+                                                            <span class="badge bg-info-subtle text-info py-1 rounded-3 border border-info">N/A</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.transaction_type}}</td>
+                                                <td>{{object.transaction_method}}</td>
+                                                <td>{{object.timestamp}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Submit Section -->
+    </main>
+{% endblock content %}

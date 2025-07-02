@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Contact Us {% endblock title %}
+{% block head %} {% include 'partials/frontend/head.html' %} {% endblock head %}
+{% block body %}
+
+  {% include "partials/frontend/preloader.html" %}
+
+  <!-- ======= Site Wrap =======-->
+  <div class="site-wrap">
+
+    <!-- ======= Header =======-->
+    {% include "partials/frontend/nav.html" %}
+    <!-- End Header-->
+
+    <!-- ======= Main =======-->
+    <main>
+
+      <!-- ======= Hero =======-->
+      <section class="hero__v6 section" id="home">
+        <div class="container mt-5">
+          <div class="row">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+              <div class="row">
+                <div class="col-lg-11">
+                  <h1 class="hero-title mb-3" data-aos="fade-up" data-aos-delay="100">Banking Made Simple, Secure, and Smarter</h1>
+                  <p class="hero-description mb-4 mb-lg-5" data-aos="fade-up" data-aos-delay="200">Discover all the powerful tools {{app_name}} offers—from personal banking and crypto deposits to loans, and cheque deposit. Everything you need to grow, save, and transact—backed by security and speed.</p>
+                  <div class="cta d-flex gap-2 mb-4 mb-lg-5" data-aos="fade-up" data-aos-delay="300"><a class="btn" href="{% url "auth:register" %}">Open an Account</a></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="hero-img">
+                <img class="img-main img-fluid rounded-4" src="{% static 'frontend/images/hero-img-2-min.jpg' %}" alt="Hero Image" data-aos="fade-in" data-aos-delay="500"></div>
+            </div>
+          </div>
+        </div>
+        <!-- End Hero-->
+      </section>
+      <!-- End Hero-->
+
+      <!-- ======= Services =======-->
+        {% include "partials/frontend/service.html" %}
+      <!-- Services-->
+
+      <!-- ======= Stats =======-->
+      <section class="stats__v3 section">
+        <div class="container">
+          <div class="row">
+            <div class="col-12">
+              <div class="d-flex flex-wrap content rounded-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="rounded-borders">
+                  <div class="rounded-border-1"></div>
+                  <div class="rounded-border-2"></div>
+                  <div class="rounded-border-3"></div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-up" data-aos-delay="100">
+                  <div class="stat-item">
+                    <h3 class="fs-1 fw-bold"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="100" data-purecounter-duration="2">0</span><span>K+</span></h3>
+                    <p class="mb-0">Active Users</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-up" data-aos-delay="200">
+                  <div class="stat-item">
+                    <h3 class="fs-1 fw-bold"> <span class="purecounter" data-purecounter-start="0" data-purecounter-end="7500" data-purecounter-duration="2">0</span><span>+</span></h3>
+                    <p class="mb-0">Crypto Transactions</p>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-4 mb-4 mb-md-0 text-center" data-aos="fade-up" data-aos-delay="300">
+                  <div class="stat-item">
+                    <h3 class="fs-1 fw-bold"><span class="purecounter" data-purecounter-start="0" data-purecounter-end="20" data-purecounter-duration="2">0</span><span>k</span></h3>
+                    <p class="mb-0">Loans Disbursed</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Stats-->
+
+       <!-- ======= FAQ =======-->
+      {% include "partials/frontend/faq.html" %}
+      <!-- End FAQ-->
+
+      <!-- ======= Footer =======-->
+      {% include "partials/frontend/footer.html" %}
+      <!-- End Footer-->
+
+
+
+    </main>
+
+  </div>
+
+  <!-- ======= Back to Top =======-->
+  {% include "partials/frontend/scroll-top.html" %}
+  <!-- End Back to top-->
+  <!-- Start Script -->
+  {% include "partials/frontend/script.html" %}
+  <!-- End Script -->
+
+{% endblock body %}

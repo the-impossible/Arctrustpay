@@ -1,0 +1,266 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Take Loan {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard" title="Take Loan" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-12">
+                    <div class="card overflow-hidden position-relative z-1">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Apply for a Home Mortgage Loan</h5>
+                        </div>
+                        <div class="card-body p-5">
+                            <p class="text-muted mb-4">Secure the keys to your dream home with our flexible mortgage loan options. Whether you're a first-time buyer or refinancing, our competitive rates, fast processing, and expert support will guide you every step of the way.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Application Progress</h5>
+                        </div>
+                        <div class="card-body d-flex flex-column gap-4 text-truncate">
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="ri-checkbox-circle-fill text-success fs-16 {% if step1 or step2 or step3 or step4 or step5 %} {% else %}text-muted{% endif %}"></i>
+                                <p class="mb-0">Pre-Mortgage Application</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="ri-checkbox-circle-fill text-success fs-16 {% if step2 or step3 or step4 or step5 %} {% else %}text-muted{% endif %}"></i>
+                                <p class="mb-0">Employment and Property Appraisal</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="ri-checkbox-circle-fill text-success fs-16 {% if step3 or step4 or step5 %} {% else %}text-muted{% endif %}"></i>
+                                <p class="mb-0">Approval</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="ri-checkbox-circle-fill text-success fs-16 {% if step4 or step5 %} {% else %}text-muted{% endif %}"></i>
+                                <p class="mb-0">Deposit Payment</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="ri-checkbox-circle-fill text-success fs-16 {% if step5 %} {% else %}text-muted{% endif %}"></i>
+                                <p class="mb-0">Payment Confirmation</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="ri-checkbox-circle-fill text-success fs-16 {% if step6 %} {% else %}text-muted{% endif %}"></i>
+                                <p class="mb-0">Underwriting & Review</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            {% if step0 %}
+                                <h5 class="card-title mb-0">Pre-Mortgage Application</h5>
+                            {% elif step1 %}
+                                <h5 class="card-title mb-0">Employment and Property Appraisal</h5>
+                            {% elif step2 %}
+                                <h5 class="card-title mb-0">Approval</h5>
+                            {% elif step3 %}
+                                <h5 class="card-title mb-0">Deposit Payment</h5>
+                            {% elif step4 %}
+                                <h5 class="card-title mb-0">Payment Confirmation</h5>
+                            {% elif step5 %}
+                                <h5 class="card-title mb-0">Underwriting & Review</h5>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% if step0 %}
+                                    {{form1|crispy}}
+                                    <button type="submit" class="btn btn-primary" name="step1">Continue</button>
+                                {% elif step1 %}
+                                    {{form2|crispy}}
+                                    <button type="submit" class="btn btn-primary" name="step2">Continue</button>
+                                {% elif pending %}
+                                    <div class="col-12">
+                                        <div class="card ribbon right">
+                                            <div class="card-header">
+                                            <h5 class="card-title mb-0">Mortgage Application</h5>
+
+                                                <span class="ribbon1 ribbon-warning">
+                                                    Pending
+                                                </span>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <h5 class="card-title">${{amount}} Requested</h5>
+                                                <p class="card-text text-muted pt-2">Awaiting verification of income and property appraisal.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% elif failed %}
+                                    <div class="col-12">
+                                        <div class="card ribbon right">
+                                            <div class="card-header">
+                                            <h5 class="card-title mb-0">Mortgage Application</h5>
+
+                                                <span class="ribbon1 ribbon-danger">
+                                                    Failed
+                                                </span>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <h5 class="card-title">${{amount}} Requested</h5>
+                                                <p class="card-text text-muted pt-2">Application Failed.</p>
+
+                                                <button class="btn btn-outline-primary" name="restart">Restart Application</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% elif step3 %}
+                                    <div class="mb-4">
+                                        <label for="amount" class="form-label">Deposit Amount <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="amount" name="requested_amount" placeholder="" required disabled value="{{amount}}">
+                                    </div>
+                                    {{form3.front_of_cheque|as_crispy_field}}
+                                    <div class="row">
+                                        <img src="" alt="frontChequePreview" id="frontChequePreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain; display: none;">
+                                    </div>
+                                    <br>
+                                    {{form3.back_of_cheque|as_crispy_field}}
+                                    <div class="row">
+                                        <img src="" alt="backChequePreview" id="backChequePreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain; display: none;">
+                                    </div>
+                                    <br>
+                                    <button type="submit" class="btn btn-primary" name="step3">Submit</button>
+                                {% elif d_pending %}
+                                    <div class="col-12">
+                                        <div class="card ribbon right">
+                                            <div class="card-header">
+                                            <h5 class="card-title mb-0">Mortgage Deposit</h5>
+
+                                                <span class="ribbon1 ribbon-warning">
+                                                    Pending
+                                                </span>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <h5 class="card-title">${{amount}} Deposited</h5>
+                                                <p class="card-text text-muted pt-2">Awaiting verification of deposited cheque.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% elif step5 %}
+                                    <div class="col-12">
+                                        <div class="card ribbon right">
+                                            <div class="card-header">
+                                            <h5 class="card-title mb-0">Underwriting & Review</h5>
+
+                                                <span class="ribbon1 ribbon-info">
+                                                    In-Progress
+                                                </span>
+                                            </div>
+                                            <div class="card-body text-dark">
+                                                <h5 class="card-title">Review</h5>
+                                                <p class="card-text pt-2">Awaiting underwriting team reviews of all submitted documents and payment.</p>
+                                                <ul>
+                                                    <li>You may be asked for additional documentation.</li>
+                                                    <li>Sign the closing documents to complete the mortgage process.</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-5">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Mortgage Instruction</h5>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>
+                                    <p><span class="fw-bold">Application & Pre-Qualification</span>
+                                        <ul>
+                                            <li>Start by filling out a basic form with your personal and financial details. This includes your income range, and the loan amount you're interested in. This step helps us understand your needs and determine your eligibility.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Employment and Property Appraisal</span>
+                                        <ul>
+                                            <li>Proof of income (pay stubs, tax returns, or 1099s).</li>
+                                            <li>Employment verification (HR contact or employer info).</li>
+                                            <li>Property details.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Approval</span>
+                                        <ul>
+                                            <li>Once we've reviewed your documents and appraised the property, we'll proceed to approve your mortgage application. You'll receive a confirmation if you meet all requirements.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Deposit Payment</span>
+                                        <ul>
+                                            <li>After approval, you'll be required to pay 10% of the property's value as a deposit to move forward with the mortgage process. This deposit confirms your commitment and secures the property.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Underwriting & Review</span>
+                                        <ul>
+                                            <li>Our underwriting team reviews all submitted documents and payment.</li>
+                                            <li>You may be asked for additional documentation.</li>
+                                            <li>Sign the closing documents to complete the mortgage process.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                {% if step3 %}
+                <script>
+                    document.getElementById('frontCheque').addEventListener('change', function(event) {
+                        const preview = document.getElementById('frontChequePreview');
+                        const file = event.target.files[0];
+
+                        if (file && file.type.startsWith('image/')) {
+                            preview.src = URL.createObjectURL(file);
+                            preview.style.display = 'block'; // show only after selection
+                        } else {
+                            preview.src = '';
+                            preview.style.display = 'none';
+                        }
+
+                    });
+                    document.getElementById('backCheque').addEventListener('change', function(event) {
+                        const preview = document.getElementById('backChequePreview');
+                        const file = event.target.files[0];
+
+                        if (file && file.type.startsWith('image/')) {
+                            preview.src = URL.createObjectURL(file);
+                            preview.style.display = 'block'; // show only after selection
+                        } else {
+                            preview.src = '';
+                            preview.style.display = 'none';
+                        }
+
+                    });
+
+                </script>
+                {% endif %}
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+    </main><!--End app-wrapper-->
+{% endblock content %}

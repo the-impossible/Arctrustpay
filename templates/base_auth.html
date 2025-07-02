@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %} {% endblock %}
+        <title>{{app_name}} | {% block title %} {% endblock %}</title>
+    </head>
+
+    <body>
+        {% include "partials/frontend/preloader.html" %}
+        {% include "partials/backend/auth-background.html" %}
+        {% include "partials/backend/auth-header.html" %}
+        {% block content %} {% endblock content %}
+        </div>
+        </div>
+        {% include "partials/backend/scripts.html" %}
+
+    </body>
+</html>

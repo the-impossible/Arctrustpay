@@ -1,0 +1,161 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Cheque Deposit {% endblock %}
+{% block content %}
+    {% url 'trx:cheque_deposit' as cheque_deposit_url %}
+    {% with title_sub="Dashboard " title="Cheque Deposit" url=cheque_deposit_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Cheque Deposit</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="text-muted mb-4">Deposit cheques securely and conveniently. All cheque payments are processed and credited to your account within 48 hours after verification.</p>
+                            <form method ="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{form.deposit_amount|as_crispy_field}}
+                                {{form.front_of_cheque|as_crispy_field}}
+                                <div class="row">
+                                    <img src="" alt="frontChequePreview" id="frontChequePreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain; display: none;">
+                                </div>
+                                <br>
+                                {{form.back_of_cheque|as_crispy_field}}
+                                <div class="row">
+                                    <img src="" alt="backChequePreview" id="backChequePreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain; display: none;">
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-primary" name="complete_payment">Upload Cheque</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Deposit Instructions</h5>
+                        </div>
+                        <div class="card card-h-100">
+                            <div class="card-body">
+                                <ol>
+                                    <li>
+                                        <p><span class="fw-bold">Prepare Your Cheque:</span> Ensure the cheque is correctly filled and made payable to your registered account name and number.
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <p><span class="fw-bold">Submit the Cheque:</span> Capture and upload your cheque via our secured platform. upload the back of the cheque, even if it's empty
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <p><span class="fw-bold">Verification Process:</span> Our team will verify the cheque details and confirm authenticity.
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <p><span class="fw-bold">Processing Time:</span> Once verified, the cheque will be processed. This may take up to 48 hours.
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <p><span class="fw-bold">Confirmation:</span> You'll receive a mail once the funds are successfully deposited into your account.
+                                        </p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.transaction.trx_reference|upper}}</td>
+                                                <td>${{object.amount}}</td>
+                                                <td>
+                                                    {% if object.trx_status.transaction_status == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                    {% elif object.trx_status.transaction_status == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                    {% elif object.trx_status.transaction_status == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                    {% else %}
+                                                        <span class="badge bg-info-subtle text-info py-1 rounded-3 border border-info">N/A</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.timestamp}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+
+        </div><!--End container-fluid-->
+
+        <script>
+            document.getElementById('frontCheque').addEventListener('change', function(event) {
+                const preview = document.getElementById('frontChequePreview');
+                const file = event.target.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    preview.src = URL.createObjectURL(file);
+                    preview.style.display = 'block'; // show only after selection
+                } else {
+                    preview.src = '';
+                    preview.style.display = 'none';
+                }
+
+            });
+            document.getElementById('backCheque').addEventListener('change', function(event) {
+                const preview = document.getElementById('backChequePreview');
+                const file = event.target.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    preview.src = URL.createObjectURL(file);
+                    preview.style.display = 'block'; // show only after selection
+                } else {
+                    preview.src = '';
+                    preview.style.display = 'none';
+                }
+
+            });
+
+        </script>
+
+    </main><!--End app-wrapper-->
+
+{% endblock content %}

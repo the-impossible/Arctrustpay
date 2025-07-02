@@ -1,0 +1,95 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Confirm Internal Transfer {% endblock %}
+{% block content %}
+    {% url 'trx:internal_transfer' as dashboard_url %}
+    {% with title_sub="Internal Transfer" title="Confirm Internal Transfer" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-12 col-xl-5 mx-auto mt-5">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Confirm Internal Transfer</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="text-muted mb-4">
+                                Please review the transfer details below before confirming.
+                                This transaction will be processed instantly within {{app_name}} accounts.
+                            </p>
+
+                            <ul class="list-group mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Amount:</strong>
+                                    <span class="text-success fw-bold">${{transfer_data.amount}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Sender Account:</strong>
+                                    <span>{{transfer_data.sender_account}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Sender Name:</strong>
+                                    <span>{{transfer_data.sender_name}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Recipient Account:</strong>
+                                    <span>{{transfer_data.recipient_account}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Recipient Name:</strong>
+                                    <span>{{transfer_data.recipient_name}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Fee:</strong>
+                                    <span class="text-success">${{transfer_data.fee}}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>Description:</strong>
+                                    <span>{{ transfer_data.description|default:"N/A"|truncatechars:30 }}</span>
+                                </li>
+                            </ul>
+
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="transactionID" class="form-label">Transaction pin<span class="text-danger">*</span></label>
+                                    <div class="position-relative">
+                                        <input type="password"
+                                            name="transaction_pin"
+                                            id="transactionPinID"
+                                            class="form-control"
+                                            inputmode="numeric"
+                                            placeholder="e.g 1234"
+                                            pattern="\d{4}"
+                                            maxlength="4"
+                                            required
+                                            value="" />
+
+                                        <button type="button"
+                                            class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted toggle-password"
+                                            id="toggle-password" data-target="transactionPinID"><i
+                                                class="ri-eye-off-line align-middle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="confirm_transfer" name="confirm_transfer">Comfirm Payment</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+
+    </main><!--End app-wrapper-->
+{% endblock content %}

@@ -1,0 +1,155 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} ACH Transfer {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard" title="ACH Transfer" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-12 col-xl-5">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">ACH Transfer</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-4">An ACH transfer allows you to move funds electronically between banks in the United States. It is commonly used for payroll, bill payments, direct deposits, and business-to-business transactions. ACH transfers are reliable, cost-effective, and typically settle within 1-2 business days.</p>
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{form|crispy}}
+                                <button type="submit" class="btn btn-primary" id="intiate_transfer" name="intiate_transfer">Comfirm Payment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-7">
+                    <div class="card overflow-hidden p-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Transfer Instructions</h5>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>
+                                    <p><span class="fw-bold">Ensure You Have Accurate Bank Details
+                                        <ul>
+                                            <li><span class="fw-bold">Routing Number:</span> A 9-digit number that identifies the recipient's U.S. bank</li>
+                                            <li><span class="fw-bold">Account Number:</span> The unique account number at the receiving bank.</li>
+                                            <li><span class="fw-bold">Account Type:</span> Select between Checking or Savings.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Enter the Transfer Amount</span>
+                                        <ul>
+                                            <li>Specify the exact amount to be transferred.</li>
+                                            <li>Ensure sufficient funds are available before submitting.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Add a Description</span>
+                                        <ul>
+                                            <li>Use this field for internal references like “Invoice #1234” or “August Rent”.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">Review and Confirm</span>
+                                        <ul>
+                                            <li>Double-check all details before submitting.</li>
+                                            <li>ACH transfers are processed in batches and may take up to 2 business days to reflect in the recipient's account.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                                <li>
+                                    <p><span class="fw-bold">No Weekend Processing</span>
+                                        <ul>
+                                            <li>Transfers initiated after business hours or on weekends/holidays will be processed on the next business day.</li>
+                                        </ul>
+                                    </p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Type</th>
+                                            <th>Method</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.transaction.trx_reference|upper}}</td>
+                                                <td>{% if object.transaction.transaction_type.transaction_type|lower == 'debit' %}-{% endif %}
+                                                    ${{object.amount}}
+                                                </td>
+                                                <td>
+                                                    {% if object.transaction.transaction_type.transaction_type|lower == 'debit' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">{{object.transaction.transaction_type.transaction_type}}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">{{object.transaction.transaction_type.transaction_type}}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.transaction.transaction_method.method}}</td>
+                                                <td>{{object.note|default:"--"|truncatechars:20}}</td>
+                                                <td>{{object.timestamp}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+        <script>
+            document.body.addEventListener("htmx:afterSwap", function (e) {
+                if (e.target.id === "recipient-name-field") {
+                    const recipientNameInput = document.getElementById("recipient_name_input");
+                    const submitButton = document.getElementById("intiate_transfer");
+
+                    const value = recipientNameInput?.value?.trim().toLowerCase();
+
+                    if (value && value !== "invalid account") {
+                        submitButton.disabled = false;
+                    } else {
+                        submitButton.disabled = true;
+                    }
+                }
+            });
+        </script>
+    </main><!--End app-wrapper-->
+{% endblock content %}

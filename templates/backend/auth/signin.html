@@ -1,0 +1,64 @@
+{% extends "base_auth.html" %}
+{% load static %}
+
+{% block head %}
+  {% include "partials/backend/head.html" %}
+  <!-- Add this before your app.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock head %}
+{% block title %} Sign-In {% endblock %}
+{% block content %}
+
+<div class="container">
+  <div class="row justify-content-center align-items-center min-vh-100 pt-20 pb-10">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+      <div class="card mx-xxl-8 shadow-none">
+        <div class="card-body p-8">
+          <h3 class="fw-medium text-center">Welcome back!</h3>
+          <p class="mb-8 text-muted text-center">Log in to your account to continue.</p>
+          {% include "partials/backend/messages.html" %}
+
+          <form method="POST">
+            {% csrf_token %}
+            <div class="mb-4">
+              <label for="username" class="form-label">Account Number <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="username" name="username" placeholder="e.g 3672387323" required>
+            </div>
+            <div class="mb-4">
+              <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+              <div class="position-relative">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                <button type="button"
+                  class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted toggle-password"
+                  id="toggle-password" data-target="password"><i class="ri-eye-off-line align-middle"></i></button>
+              </div>
+            </div>
+            <div class="my-6">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="rememberMe">
+                  <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+                <div class="form-text">
+                  <a href="{% url "auth:forget-password" %}" class="link" style="color:#215C5C !important;">Forgot password?</a>
+                </div>
+              </div>
+            </div>
+            <div>
+              <button type="submit" class="btn btn-primary w-100 mb-4">Sign In</button>
+            </div>
+          </form>
+
+          <p class="text-center mt-6 mb-0 text-muted fs-13">Don't have an account? <a href="{% url "auth:register" %}"
+              class="link fw-semibold" style="color:#215C5C !important;">Sign up here</a></p>
+        </div>
+      </div>
+      <p class="position-relative text-center fs-13 mb-0">©
+        <script>document.write(new Date().getFullYear())</script> {{app_name}}
+      </p>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

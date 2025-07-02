@@ -1,0 +1,174 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} International Wire Transfer {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard" title="International Wire" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-12 col-xl-5">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">International Wire</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-4">Transfer funds securely to a foreign bank account. Please ensure all recipient banking information is accurate. International transfers may take 1-5 business days to complete and are subject to currency exchange rates and international wire charges.</p>
+                            <form method="POST">
+                                {% csrf_token %}
+                                {{form|crispy}}
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
+                                    <select id="country" class="form-select" name="country" required>
+                                        <option>select country</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="intiate_transfer" name="intiate_transfer">Comfirm Payment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-7">
+                    <div class="card overflow-hidden p-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Transfer Instructions</h5>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>
+                                    <p><span>Confirm recipient bank supports international wire transfers.</span></p>
+                                </li>
+                                <li>
+                                    <p><span>Double-check SWIFT/BIC and IBAN numbers — errors may result in delays or failed transfers.</span></p>
+                                </li>
+                                <li>
+                                    <p><span>Transfers may incur additional fees depending on the destination country and intermediary banks.</span></p>
+                                </li>
+                                <li>
+                                    <p><span>Ensure sufficient balance (amount + wire charge).</span></p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Type</th>
+                                            <th>Method</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.transaction.trx_reference|upper}}</td>
+                                                <td>{% if object.transaction.transaction_type.transaction_type|lower == 'debit' %}-{% endif %}
+                                                    ${{object.amount}}
+                                                </td>
+                                                <td>
+                                                    {% if object.transaction.transaction_type.transaction_type|lower == 'debit' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">{{object.transaction.transaction_type.transaction_type}}</span>
+                                                    {% else %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">{{object.transaction.transaction_type.transaction_type}}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.transaction.transaction_method.method}}</td>
+                                                <td>{{object.note|default:"--"|truncatechars:20}}</td>
+                                                <td>{{object.timestamp}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+        <script src="/static/backend/assets/js/country-states.js"></script>
+
+    <script>
+    // user country code for selected option
+    var user_country_code = "US";
+
+        (() => {
+            // script https://www.html-code-generator.com/html/drop-down/state-name
+
+            // Get the country name and state name from the imported script.
+            const country_list = country_and_states.country;
+            const state_list = country_and_states.states;
+
+            const id_state_option = document.getElementById("state");
+            const id_country_option = document.getElementById("country");
+
+            const create_country_selection = () => {
+                let option = '';
+                option += '<option value="">select country</option>';
+                for (const country_code in country_list) {
+                    // set selected option user country
+                    let selected = (country_code == user_country_code) ? ' selected' : '';
+                    option += '<option value="' + country_code + '"' + selected + '> '
+                    + country_list[country_code] + '</option>';
+                }
+                id_country_option.innerHTML = option;
+            };
+
+            const create_states_selection = () => {
+                // selected country code
+                let selected_country_code = id_country_option.value;
+                // get state names by selected country-code
+                let state_names = state_list[selected_country_code];
+
+                // if invalid country code
+                if (!state_names) {
+                    id_state_option.innerHTML = '<option>select state</option>';
+                    return;
+                }
+                // create option
+                let option = '';
+                option += '<option>select state</option>';
+                state_names.forEach(state => {
+                    option += '<option value="' + state.code + '">' + state.name + '</option>';
+                });
+                id_state_option.innerHTML = option;
+            };
+
+            // country select change event update state code
+            id_country_option.addEventListener('change', create_states_selection);
+
+            create_country_selection();
+            create_states_selection();
+        })();
+
+    </script>
+    </main><!--End app-wrapper-->
+{% endblock content %}

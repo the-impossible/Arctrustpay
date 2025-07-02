@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head>
+    {% block head %} {% endblock %}
+    <title>{{app_name}} | {% block title %} {% endblock %}</title>
+</head>
+
+<body>
+    <div id="layout-wrapper">
+        {% include "partials/frontend/preloader.html" %}
+        {% include "partials/backend/auth_nav.html" %}
+        {% include "partials/backend/sidebar.html" %}
+        <main class="app-wrapper">
+            <div class="container-fluid">
+                {% block content %} {% endblock content %}
+            </div><!--End container-fluid-->
+        </main>
+        {% include "partials/backend/scroll-to-top.html" %}
+        {% include "partials/backend/footer.html" %}
+    </div>
+    {% include "partials/backend/auth_scripts.html" %}
+
+</body>
+
+</html>

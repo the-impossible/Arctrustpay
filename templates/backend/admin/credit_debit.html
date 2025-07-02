@@ -1,0 +1,305 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Manage Transactions {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard" title="Manage Credit/Debit Transactions" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- TradingView Widget BEGIN -->
+                            <div class="tradingview-widget-container">
+                                <div class="tradingview-widget-container__widget"></div>
+                                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                                {
+                                "symbols": [
+                                    {
+                                    "description": "Tesla",
+                                    "proName": "NASDAQ:TSLA"
+                                    },
+                                    {
+                                    "description": "Apple Inc",
+                                    "proName": "NASDAQ:AAPL"
+                                    },
+                                    {
+                                    "description": "Nvidia",
+                                    "proName": "NASDAQ:NVDA"
+                                    },
+                                    {
+                                    "description": "Microsoft",
+                                    "proName": "NASDAQ:MSFT"
+                                    },
+                                    {
+                                    "description": "Advanced Micro Devices",
+                                    "proName": "NASDAQ:AMD"
+                                    },
+                                    {
+                                    "description": "Meta",
+                                    "proName": "NASDAQ:META"
+                                    },
+                                    {
+                                    "description": "Netflix",
+                                    "proName": "NASDAQ:NFLX"
+                                    }
+                                ],
+                                "showSymbolLogo": true,
+                                "colorTheme": "light",
+                                "isTransparent": false,
+                                "displayMode": "compact",
+                                "locale": "en"
+                                }
+                                </script>
+                            </div>
+                            <!-- TradingView Widget END -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Transaction Type</th>
+                                            <th>Transaction Method</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.trx_reference|upper}}</td>
+                                                <td>{% if object.transaction_type.transaction_type|lower == 'debit' %}-{% endif %}
+                                                    ${{object.amount}}</td>
+                                                <td>
+                                                    {% if object.get_origin_status == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                    {% elif object.get_origin_status == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                    {% elif object.get_origin_status == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                    {% else %}
+                                                        {% if object.trx_status|title == 'Completed' %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                        {% elif object.trx_status|title == 'Failed' %}
+                                                        <span class="badge bg-danger-subtle text-danger py-1 rounded-3 border border-danger">Failed</span>
+                                                        {% elif object.trx_status|title == 'Pending' %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+                                                        {% else %}
+                                                            <span class="badge bg-info-subtle text-info py-1 rounded-3 border border-info">N/A</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.transaction_type}}</td>
+                                                <td>{{object.transaction_method.method}}</td>
+                                                <td>{{object.description|truncatechars:20}}</td>
+                                                <td>{{object.timestamp}}</td>
+                                                <td>
+                                                    <a class="btn btn-outline-primary btn-sm" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#viewModal{{forloop.counter}}">View</a>
+                                                    {% if object.trx_status.transaction_status == 'Pending' and object.transaction_method.method != 'Internal Transfer'%}
+                                                    <a class="btn btn-primary btn-sm" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#approveModal{{forloop.counter}}">Approve</a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+
+                                            <div class="modal fade" id="approveModal{{forloop.counter}}" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Approve Transaction</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure you want to approve this transaction?</p>
+                                                            <br>
+                                                            <p><b>Reference</b>: {{object.trx_reference|upper}}</p>
+                                                            <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                            <p><b>Name</b>: {{object.user.personal_info|upper}}</p>
+                                                            <p><b>Amount</b>: ${{object.amount}}</p>
+                                                            <p><b>Transaction Type</b>: {{object.transaction_type}}</p>
+                                                            <p><b>Transaction Method</b>: {{object.transaction_method}}</p>
+                                                            <p><b>Description</b>: {{object.description|truncatechars:20}}</p>
+                                                            <p><b>Date</b>: {{object.timestamp}}</p>
+                                                            <br>
+                                                            <p><b>NB: This action is irreversible</b></p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form action="" method="post">
+                                                                {% csrf_token %}
+                                                                <input type="hidden" value="{{object.pk}}" name="trx_id">
+                                                                <button class="btn btn-danger" type="submit" name="disapprove">Disapprove</button>
+                                                                <button class="btn btn-primary" type="submit" name="approve">Approve</button>
+                                                            </form>
+                                                            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal fade" id="viewModal{{forloop.counter}}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content ">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">View Transaction</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Are you sure you want to approve this transaction?</p>
+                                                            <br>
+                                                            <p><b>Reference</b>: {{object.trx_reference|upper}}</p>
+
+                                                            {% if object.cheque_trx %}
+                                                            <p><b>Account Name</b>: {{object.cheque_trx.user.personal_info}}</p>
+                                                            <p><b>Account Number</b>: {{object.cheque_trx.user.username}}</p>
+                                                            <p><strong>Front of Cheque</strong></p>
+                                                            <img src="{{object.cheque_trx.cheque_front_img.url}}" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                                                            <p class="mt-3"><strong>Back of Cheque</strong></p>
+                                                            <img src="{{object.cheque_trx.cheque_back_img.url}}" class="mb-3" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                                                            {% elif object.crypto_trx %}
+                                                            <p><b>Account Name</b>: {{object.crypto_trx.user.personal_info}}</p>
+                                                            <p><b>Account Number</b>: {{object.crypto_trx.user.username}}</p>
+                                                            <p class="mt-3"><strong>Transaction Image</strong></p>
+                                                            <img src="{{object.crypto_trx.transaction_image.url}}" class="mb-3" alt="Proof Preview" id="proofPreview" class="img-fluid rounded border" style="max-width: 100%; max-height: 300px; object-fit: contain;">
+                                                            {% elif object.transfer_trx %}
+                                                            <p><b>Sender Name</b>: {{object.transfer_trx.user.personal_info}}</p>
+                                                            <p><b>Sender Account</b>: {{object.transfer_trx.user.username}}</p>
+                                                            <p><b>Receiver Name</b>: {{object.transfer_trx.account_name}}</p>
+                                                            <p><b>Receiver Number</b>: {{object.transfer_trx.account_number}}</p>
+                                                            <p><b>Routing Number</b>: {{object.transfer_trx.routing_number}}</p>
+                                                            <p><b>Account Type</b>: {{object.transfer_trx.account_type}}</p>
+                                                            <p><b>Amount</b>: ${{object.transfer_trx.amount}}</p>
+                                                            {% elif object.d_wire_trx %}
+                                                            <p><b>Sender Name</b>: {{object.d_wire_trx.user.personal_info}}</p>
+                                                            <p><b>Sender Account</b>: {{object.d_wire_trx.user.username}}</p>
+                                                            <p><b>Receiver Name</b>: {{object.d_wire_trx.account_name}}</p>
+                                                            <p><b>Receiver Number</b>: {{object.d_wire_trx.account_number}}</p>
+                                                            <p><b>Routing Number</b>: {{object.d_wire_trx.routing_number}}</p>
+                                                            <p><b>Bank Name</b>: {{object.d_wire_trx.bank_name}}</p>
+                                                            <p><b>Amount</b>: ${{object.d_wire_trx.amount}}</p>
+                                                            {% elif object.f_wire_trx %}
+                                                            <p><b>Sender Name</b>: {{object.f_wire_trx.user.personal_info}}</p>
+                                                            <p><b>Sender Account</b>: {{object.f_wire_trx.user.username}}</p>
+                                                            <p><b>Receiver Name</b>: {{object.f_wire_trx.account_name}}</p>
+                                                            <p><b>Receiver Number</b>: {{object.f_wire_trx.account_number}}</p>
+                                                            <p><b>Routing Number</b>: {{object.f_wire_trx.routing_number}}</p>
+                                                            <p><b>Bank Name</b>: {{object.f_wire_trx.bank_name}}</p>
+                                                            <p><b>Bank Address</b>: {{object.f_wire_trx.bank_address}}</p>
+                                                            <p><b>Swift Bic Code</b>: {{object.f_wire_trx.swift_bic_code}}</p>
+                                                            <p><b>Iban</b>: {{object.f_wire_trx.iban}}</p>
+                                                            <p><b>Country</b>: {{object.f_wire_trx.country}}</p>
+                                                            <p><b>Amount</b>: ${{object.f_wire_trx.amount}}</p>
+                                                            {% else %}
+                                                            <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                            <p><b>Name</b>: {{object.user.personal_info|upper}}</p>
+                                                            <p><b>Amount</b>: ${{object.amount}}</p>
+                                                            {% endif %}
+                                                            <p><b>Transaction Type</b>: {{object.transaction_type}}</p>
+                                                            <p><b>Transaction Method</b>: {{object.transaction_method}}</p>
+                                                            <p><b>Description</b>: {{object.description|truncatechars:20}}</p>
+                                                            <p><b>Date</b>: {{object.timestamp}}</p>
+                                                            <br>
+                                                            <p><b>NB: This action is irreversible</b></p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+        <script src="/static/backend/assets/js/country-states.js"></script>
+
+    <script>
+    // user country code for selected option
+    var user_country_code = "US";
+
+        (() => {
+            // script https://www.html-code-generator.com/html/drop-down/state-name
+
+            // Get the country name and state name from the imported script.
+            const country_list = country_and_states.country;
+            const state_list = country_and_states.states;
+
+            const id_state_option = document.getElementById("state");
+            const id_country_option = document.getElementById("country");
+
+            const create_country_selection = () => {
+                let option = '';
+                option += '<option value="">select country</option>';
+                for (const country_code in country_list) {
+                    // set selected option user country
+                    let selected = (country_code == user_country_code) ? ' selected' : '';
+                    option += '<option value="' + country_code + '"' + selected + '> '
+                    + country_list[country_code] + '</option>';
+                }
+                id_country_option.innerHTML = option;
+            };
+
+            const create_states_selection = () => {
+                // selected country code
+                let selected_country_code = id_country_option.value;
+                // get state names by selected country-code
+                let state_names = state_list[selected_country_code];
+
+                // if invalid country code
+                if (!state_names) {
+                    id_state_option.innerHTML = '<option>select state</option>';
+                    return;
+                }
+                // create option
+                let option = '';
+                option += '<option>select state</option>';
+                state_names.forEach(state => {
+                    option += '<option value="' + state.code + '">' + state.name + '</option>';
+                });
+                id_state_option.innerHTML = option;
+            };
+
+            // country select change event update state code
+            id_country_option.addEventListener('change', create_states_selection);
+
+            create_country_selection();
+            create_states_selection();
+        })();
+
+    </script>
+    </main><!--End app-wrapper-->
+{% endblock content %}

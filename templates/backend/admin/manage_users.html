@@ -1,0 +1,126 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Manage Users {% endblock %}
+{% block content %}
+    {% url 'user:dashboard' as dashboard_url %}
+    {% with title_sub="Dashboard " title="Manage Users" url=dashboard_url%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+                <div class="col-12 col-xl-12">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Manage Users</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <p class="text-muted mb-4">Easily view, and manage all registered users on the platform.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>All Users</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                          <th>SN</th>
+                                          <th></th>
+                                           <th>Acct No.</th>
+                                           <th>Name</th>
+                                           <th>Email</th>
+                                           <th>Phone Number</th>
+                                           <th>Balance</th>
+                                           <th>IMF</th>
+                                           <th>Gender</th>
+                                           <th>Date of Birth</th>
+                                           <th>State</th>
+                                           <th>Country</th>
+                                           <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                                <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td class="w60">
+                                                    <a href="{{ object.pic.url }}" target="_blank"><img class="avatar" src="{{ object.pic.url }}" width="50px" height="50px" alt=""></a>
+                                                </td>
+                                                <td>{{object.username|upper}}</td>
+                                                <td>{{object.personal_info|upper}}</td>
+                                                <td>{{object.email}}</td>
+                                                <td>{{object.contact_info.phone_number}}</td>
+                                                <td><span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">${{object.balance.amount}}</span></td>
+                                                <td>{% if object.user_imf %}{{object.user_imf.code}}{% else %}N/A{% endif %}</td>
+                                                <td>{{object.personal_info.gender}}</td>
+                                                <td>{{object.personal_info.date_of_birth}}</td>
+                                                <td>{{object.contact_info.state}}</td>
+                                                <td>{{object.contact_info.country}}</td>
+                                                <td><a class="btn btn-outline-primary w-100" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#balanceModal{{forloop.counter}}">Top up</a></td>
+                                                </tr>
+                                                <div class="modal fade" id="balanceModal{{forloop.counter}}" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Top up {{object.personal_info|title}}</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"><span>×</span>
+                                                                </button>
+                                                            </div>
+
+                                                            <form action="" method="post">
+                                                                {% csrf_token %}
+                                                                <div class="modal-body">
+                                                                    <p>Account details</p>
+                                                                    <br>
+                                                                    <p><b>Account Number</b>: {{object.user.username|upper}}</p>
+                                                                    <p><b>Account Name</b>: {{object.user.personal_info|upper}}</p>
+                                                                    <p><b>Current Balance</b>: ${{object.balance.amount}}</p>
+                                                                    <p><b>Status</b>: {{object.status}}</p>
+
+                                                                    <br>
+                                                                    <div class="mb-4">
+                                                                        <label for="balance_amount" class="form-label">Top up <span class="text-danger">*</span></label>
+                                                                        <input type="number" class="form-control" id="balance_amount" name="balance_amount" placeholder="e.g 3000" required>
+                                                                    </div>
+                                                                    <input type="hidden" class="form-control" name="user_id" value="{{object.pk}}" required>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button class="btn btn-primary" type="submit">Top up</button>
+                                                                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cancel</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+
+        </div><!--End container-fluid-->
+
+    </main><!--End app-wrapper-->
+
+{% endblock content %}

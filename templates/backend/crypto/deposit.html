@@ -1,0 +1,112 @@
+{% extends "base_main.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block head %}
+  {% include "partials/backend/head.html" %}
+{% endblock head %}
+{% block title %} Crypto Deposit {% endblock %}
+{% block content %}
+    {% with title_sub="Crypto Deposit" title="Crypto Deposit"%}
+    {% include "partials/backend/pagetitle.html" %}
+    {% endwith %}
+
+<!--begin::App-->
+            {% include "partials/backend/messages.html" %}
+            <div class="row">
+
+                <div class="col-12 col-xl-5">
+                    <div class="card card-h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Crypto Deposit</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-4">Choose the crypto you want to deposit, Only send the exact cryptocurrency and amount to the correct address, Our team will verify your payment. Once confirmed, your account will be credited.</p>
+                            <form method="POST" action="{% url 'trx:complete_crypto_deposit' %}">
+                                {% csrf_token %}
+                                {{form|crispy}}
+                                <button type="submit" class="btn btn-primary" name="crypto_deposit">Proceed with Payment</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-7">
+                    <div class="card overflow-hidden card-h-100 p-4">
+                        <!-- TradingView Widget BEGIN -->
+                        <div class="tradingview-widget-container" style="height:100%;width:100%">
+                            <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+                            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                                {
+                                    "autosize": true,
+                                    "symbol": "NASDAQ:AAPL",
+                                    "interval": "D",
+                                    "timezone": "exchange",
+                                    "theme": "light",
+                                    "backgroundColor": "rgba(255, 255, 255, 1)",
+                                    "style": "3",
+                                    "hide_top_toolbar": true,
+                                    "save_image": false,
+                                    "locale": "en",
+                                    "calendar": false,
+                                    "support_host": "https://www.tradingview.com"
+                                }
+                            </script>
+                        </div>
+                        <!-- TradingView Widget END -->
+                    </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recent Transactions</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-box table-responsive">
+                                <table class="table table-hover text-nowrap">
+                                    <thead class="table-light border-0">
+                                        <tr>
+                                            <th>SN</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Amount</th>
+                                            <th>Network</th>
+                                            <th>Status</th>
+                                            <th>Receiving Wallet</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if object_list %}
+                                            {% for object in object_list %}
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td>{{object.transaction.trx_reference|upper}}</td>
+                                                <td>${{object.amount}}</td>
+                                                <td>{{object.crypto_type}}</td>
+                                                <td>
+                                                    {% if object.is_confirmed %}
+                                                        <span class="badge bg-success-subtle text-success py-1 rounded-3 border border-success">Completed</span>
+                                                        {% else %}
+                                                        <span class="badge bg-warning-subtle text-warning py-1 rounded-3 border border-warning">Pending</span>
+
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{object.crypto_type.crypto_address}}</td>
+                                                <td>{{object.timestamp}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% include 'partials/backend/empty_list.html' %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!--End row-->
+        </div><!--End container-fluid-->
+    </main><!--End app-wrapper-->
+{% endblock content %}

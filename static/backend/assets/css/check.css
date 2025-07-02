@@ -1,0 +1,18 @@
+#div_id_phone_number fieldset {
+    display: block; /* default block layout so legend stays full width */
+  }
+
+  #div_id_phone_number select,
+  #div_id_phone_number input[type="tel"] {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  #div_id_phone_number select {
+    width: 90px;
+    margin-right: 8px;
+  }
+
+  #div_id_phone_number input[type="tel"] {
+    width: calc(100% - 100px); /* Adjust based on select width + margin */
+  }

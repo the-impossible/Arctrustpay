@@ -1,0 +1,33 @@
+<div class="col-12 col-xl-7 mx-auto">
+    <div class="card overflow-hidden p-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Contact Support to Proceed</h5>
+        </div>
+        <div class="card-body">
+            <div class="text-center py-20 py-md-16">
+                <img src="/static/backend/assets/images/vector/authorized.png" width="300px" alt="Not Authorized" class="img-fluid mb-12">
+                <h1 class="mb-4 fs-35 text-primary">Contact Support</h1>
+                <p class="max-w-600px mx-auto fs-15 text-muted"> It looks like you need assistance to continue. Please reach out to our support team using one of the options below.</p>
+                <div class="mt-4">
+                    <p><strong>Email:</strong> <a href="mailto:{{support_details.email}}">{{support_details.email}}</a></p>
+                    <p><strong>Phone:</strong> {{support_details.phone}}</p>
+                </div>
+                <div class="mt-12 d-flex justify-content-center gap-3">
+                    <a onclick="openJivoChat()" class="btn btn-outline-primary">Chat with Support</a>
+                    <a href="javascript:history.back()" class="btn btn-primary">back</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script>
+function openJivoChat() {
+    if (typeof jivo_api !== 'undefined') {
+    jivo_api.open();
+    } else {
+    console.warn('JivoChat not yet loaded.');
+    }
+}
+</script>
