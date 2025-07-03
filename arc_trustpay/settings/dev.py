@@ -18,7 +18,9 @@ HTTP = 'http://'
 
 #Email
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST='server362.web-hosting.com'
-EMAIL_USE_SSL=True
+EMAIL_HOST='live.smtp.mailtrap.io'
+EMAIL_USE_TLS=True
+EMAIL_USE_SSL=False
+EMAIL_PORT=587
 EMAIL_HOST_USER=config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD=config("EMAIL_HOST_PASSWORD")

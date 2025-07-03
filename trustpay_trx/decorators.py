@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib import messages
 from trustpay_trx.models import *
+from trustpay_auth.models import *
 from trustpay_trx import views
 
 # My app imports

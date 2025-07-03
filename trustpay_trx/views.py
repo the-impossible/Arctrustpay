@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.db import transaction
 from django.contrib.auth.hashers import make_password, check_password
 from decimal import Decimal
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 
 # My app imports
@@ -18,9 +19,13 @@ from trustpay_trx.models import *
 from trustpay_user.forms import *
 from trustpay_trx.forms import *
 from trustpay_trx.decorators import *
+from trustpay_user.decorators import *
 from trustpay_email.mailer import *
 
+
+
 # Create your views here.
+@method_decorator([has_updated], name='dispatch')
 class CryptoDepositView(LoginRequiredMixin, TemplateView, SuccessMessageMixin):
     template_name = "backend/crypto/deposit.html"
     form = DepositEnquiryForm
@@ -31,6 +36,7 @@ class CryptoDepositView(LoginRequiredMixin, TemplateView, SuccessMessageMixin):
         context['object_list'] = CryptoDeposit.objects.all().order_by('-timestamp')
         return context
 
+@method_decorator([has_updated], name='dispatch')
 class CompleteCryptoDepositView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/crypto/complete_deposit.html"
     form = CompleteDepositEnquiryForm
@@ -95,6 +101,7 @@ class CompleteCryptoDepositView(LoginRequiredMixin, View, SuccessMessageMixin):
 
             return render(request, self.template_name, context)
 
+@method_decorator([has_updated], name='dispatch')
 class ChequeDepositView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/cheque/cheque_deposit.html"
     form = ChequeDepositForm
@@ -145,6 +152,7 @@ class ChequeDepositView(LoginRequiredMixin, View, SuccessMessageMixin):
             }
             return render(request, self.template_name, context)
 
+@method_decorator([has_updated], name='dispatch')
 class InternalTransferView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/internal_transfer.html"
     form = InternalTransferForm
@@ -207,7 +215,7 @@ class InternalTransferView(LoginRequiredMixin, View, SuccessMessageMixin):
             }
             return render(request, self.template_name, context)
 
-@method_decorator([has_transaction_pin, has_transfer_data], name='dispatch')
+@method_decorator([has_updated, has_transaction_pin, has_transfer_data], name='dispatch')
 class ConfirmInternalTransferView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/confirm_internal_transfer.html"
 
@@ -306,6 +314,7 @@ class ConfirmInternalTransferView(LoginRequiredMixin, View, SuccessMessageMixin)
             messages.error(request, 'Insufficient balance !! ')
             return redirect('trx:internal_transfer')
 
+@method_decorator([has_updated], name='dispatch')
 class TransactionPageView(LoginRequiredMixin, TemplateView, SuccessMessageMixin):
     template_name = "backend/trx/transaction.html"
     form = DepositEnquiryForm
@@ -347,6 +356,7 @@ def validate_recipient_account(request):
     html = render_to_string("backend/transfer/partials/recipient_name.html", context)
     return HttpResponse(html)
 
+@method_decorator([has_updated], name='dispatch')
 class ACHTransferView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/ach_transfer.html"
     form = ACHTransferForm
@@ -400,7 +410,7 @@ class ACHTransferView(LoginRequiredMixin, View, SuccessMessageMixin):
             }
             return render(request, self.template_name, context)
 
-@method_decorator([has_transaction_pin, has_ach_data], name='dispatch')
+@method_decorator([has_updated, has_transaction_pin, has_ach_data], name='dispatch')
 class ConfirmACHTransferView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/confirm_ach_transfer.html"
 
@@ -493,6 +503,7 @@ class ConfirmACHTransferView(LoginRequiredMixin, View, SuccessMessageMixin):
             messages.error(request, 'Insufficient balance !! ')
             return redirect('trx:ach_transfer')
 
+@method_decorator([has_updated], name='dispatch')
 class DomesticWireView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/d_wire_transfer.html"
     form = DomesticWireForm
@@ -546,7 +557,7 @@ class DomesticWireView(LoginRequiredMixin, View, SuccessMessageMixin):
             }
             return render(request, self.template_name, context)
 
-@method_decorator([has_transaction_pin, has_domestic_data], name='dispatch')
+@method_decorator([has_updated, has_transaction_pin, has_domestic_data], name='dispatch')
 class ConfirmDomesticWireView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/confirm_d_wire_transfer.html"
 
@@ -638,6 +649,7 @@ class ConfirmDomesticWireView(LoginRequiredMixin, View, SuccessMessageMixin):
             messages.error(request, 'Insufficient balance !! ')
             return redirect('trx:d_wire_transfer')
 
+@method_decorator([has_updated], name='dispatch')
 class InternationalWireView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/f_wire_transfer.html"
     form = InternationalWireForm
@@ -697,7 +709,7 @@ class InternationalWireView(LoginRequiredMixin, View, SuccessMessageMixin):
             }
             return render(request, self.template_name, context)
 
-@method_decorator([has_transaction_pin, has_international_data], name='dispatch')
+@method_decorator([has_updated, has_transaction_pin, has_international_data], name='dispatch')
 class ConfirmInternationalWireView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/transfer/confirm_f_wire_transfer.html"
 
@@ -792,6 +804,7 @@ class ConfirmInternationalWireView(LoginRequiredMixin, View, SuccessMessageMixin
             messages.error(request, 'Insufficient balance !! ')
             return redirect('trx:f_wire_transfer')
 
+@method_decorator([has_updated], name='dispatch')
 class CreditDebitTransactionView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/trx/credit_debit.html"
 
@@ -802,6 +815,7 @@ class CreditDebitTransactionView(LoginRequiredMixin, View, SuccessMessageMixin):
         }
         return render(request, self.template_name, context)
 
+@method_decorator([has_updated], name='dispatch')
 class TakeLoanView(LoginRequiredMixin, View, SuccessMessageMixin):
     template_name = "backend/loan/take_loan.html"
     form1 = MortgageApplicationForm
@@ -969,6 +983,7 @@ class TakeLoanView(LoginRequiredMixin, View, SuccessMessageMixin):
             messages.error(request, "Couldn't process request, Try again!")
             return redirect('trx:take_loan')
 
+@method_decorator([has_updated], name='dispatch')
 class RepayLoanView(LoginRequiredMixin, View, SuccessMessageMixin):
 
     template_name = "backend/loan/repay_loan.html"

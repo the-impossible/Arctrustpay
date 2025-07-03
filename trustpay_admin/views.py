@@ -407,4 +407,3 @@ class ManageUsersView(LoginRequiredMixin, View, SuccessMessageMixin):
 
         return render(request, self.template_name, context)
 
-

@@ -6,7 +6,7 @@ from trustpay_landing.models import *
 
 class ContactUsForm(forms.ModelForm):
 
-    name = forms.CharField(help_text='Enter your full nname', strip=True, empty_value=None, widget=forms.TextInput(
+    name = forms.CharField(help_text='Enter your full name', strip=True, empty_value=None, widget=forms.TextInput(
         attrs={
             'class': 'form-control',
             'type': 'text'

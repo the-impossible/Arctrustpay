@@ -6,13 +6,16 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.hashers import make_password, check_password
+from django.utils.decorators import method_decorator
 
 # My app imports
 from trustpay_user.models import *
 from trustpay_user.forms import *
 from trustpay_trx.models import *
+from trustpay_user.decorators import *
 
 # Create your views here.
+@method_decorator([has_updated], name='dispatch')
 class DashboardPageView(LoginRequiredMixin, TemplateView, SuccessMessageMixin):
     template_name = "backend/dashboard.html"
 

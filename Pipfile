@@ -16,6 +16,7 @@ babel = "*"
 phonenumbers = "*"
 django-auto-logout = "*"
 pymysql = "*"
+django-anymail = "*"
 
 [dev-packages]
 

@@ -162,9 +162,11 @@ class Transaction(models.Model):
 
         super().save(*args, **kwargs)
 
+        method = self.transaction_method.method.lower() if self.transaction_method else ''
 
-        if is_new:
-            balance, created = Balance.objects.get_or_create(user=self.user)
+        if is_new and method not in ['cheque deposit', 'crypto deposit']:
+
+            balance, _ = Balance.objects.get_or_create(user=self.user)
 
             amount = Decimal(self.amount)
             charges = Decimal(charge)

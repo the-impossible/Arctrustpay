@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'trustpay_trx',
     'trustpay_admin',
+    'anymail',
 ]
 
 MIDDLEWARE = [
@@ -115,6 +116,7 @@ LOGIN_URL = 'auth:login'
 
 # APP-DETAILS
 APP_NAME = 'Arc-trustPay'
+DEFAULT_FROM_EMAIL = 'info@arctrustpay.com'
 
 PHONENUMBER_DEFAULT_REGION = 'US'
 PHONENUMBER_DB_FORMA = 'INTERNATIONAL'

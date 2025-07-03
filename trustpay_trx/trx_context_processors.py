@@ -11,7 +11,7 @@ def trx_context(request):
     try:
         context['user_balance'] = Balance.objects.filter(user=request.user).first().amount
     except AttributeError:
-        context['user_balance'] = 'None'
+        context['user_balance'] = '0'
     except ValidationError:
         pass
 

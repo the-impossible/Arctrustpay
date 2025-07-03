@@ -98,8 +98,16 @@ class RegisterPageView(View):
             messages.error(request, form.errors.as_text())
             return render(request, self.template_name, context)
 
-class EmailPreviewPageView(TemplateView):
+class EmailPreviewPageView(View):
     template_name = "email/crypto_deposit_failed.html"
+
+    def get(self, request):
+        user_details = {
+            'email':'richardemmanuel45@gmail.com',
+            'user':'richard',
+        }
+        Email.send(user_details, 'test')
+        return render(request, self.template_name)
 
 class SignOutPageView(TemplateView):
     template_name = "backend/auth/signout.html"

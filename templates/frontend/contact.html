@@ -45,7 +45,7 @@
             </div>
             <div class="col-md-6">
               {% include "partials/backend/messages.html" %}
-              <div class="form-wrapper" data-aos="fade-up" data-aos-delay="300">
+              <div class="form-wrapper mt-5" data-aos="fade-up" data-aos-delay="300">
                 <form id="contactForm" method="POST">
                   {% csrf_token %}
                   {{form|crispy}}
